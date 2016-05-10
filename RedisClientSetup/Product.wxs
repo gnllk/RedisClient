@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <?define var.Version = "1.0.0.1"?>
+  <?define var.UpgradeCode = "04996b62-3500-4b6c-a5f7-1b3495f959c7"?>
+  <?define var.ProductID = "CEE27F9D-4330-4C92-8389-293FFC1CECD0"?>
+
+  <Product Id="$(var.ProductID)" Name="RedisClientSetup" Language="1033" Version="$(var.Version)" Manufacturer="Personal" UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <MajorUpgrade
+      Schedule="afterInstallValidate"
+      AllowSameVersionUpgrades="no"
+      AllowDowngrades="no"
+      DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <Icon Id="icon.ico" SourceFile="redis_client.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <Feature Id="ProductFeature" Title="RedisClientSetup" Level="1"  >
+      <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopFolderShortcut" />
+    </Feature>
+
+    <PropertyRef Id="NETFRAMEWORK40CLIENT"/>
+
+    <Condition Message='This setup requires Microsoft .NET Framework 4.0 Client package or greater needs to be installed for this installation to continue.'>
+      <![CDATA[Installed OR NETFRAMEWORK40CLIENT]]>
+    </Condition>
+
+    <UI>
+      <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+      <UIRef Id="WixUI_InstallDir" />
+    </UI>
+
+    <WixVariable Id="WixUILicenseRtf"  Value="License.rtf" />
+
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="RedisClient" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="RedisClient"/>
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="ProductComponent" Guid="C304FBD9-7446-4906-9548-867D634F73B6">
+        <File Id="Gnllk.RControl.dll" Source="$(var.RedisClient.TargetDir)Gnllk.RControl.dll" />
+        <File Id="RClient.dll" Source="$(var.RedisClient.TargetDir)RClient.dll" />
+        <File Id="Config.json" Source="Config.json" />
+        <File Id="RedisClient.exe" Source="$(var.RedisClient.TargetDir)RedisClient.exe" />
+        <File Id="License.rtf" Source="License.rtf" />
+        <File Id="redis_client.ico" Source="redis_client.ico" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="A28380EB-D380-4293-8D79-21A0331EA160">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="RedisClient"
+                  Description="RedisClient for showing Kohler configuration object"
+                  Target="[INSTALLFOLDER]RedisClient.exe"
+                  WorkingDirectory="INSTALLFOLDER"/>
+
+        <Shortcut Id="UninstallProduct"
+                  Name="Uninstall"
+                  Description="Uninstalls My Application"
+                  Target="[SystemFolder]msiexec.exe"
+                  Arguments="/x [ProductCode]"/>
+
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\RedisClient\MenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopFolderShortcut" Guid="5A254682-DD1F-453D-8333-144457282026">
+        <Shortcut Id="DesktopShortcut"
+                  Directory="DesktopFolder"
+                  Name="RedisClient"
+                  Target="[INSTALLFOLDER]RedisClient.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\RedisClient\DesktopShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
