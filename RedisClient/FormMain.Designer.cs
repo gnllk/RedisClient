@@ -307,6 +307,7 @@
             this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtValue.Size = new System.Drawing.Size(607, 550);
             this.txtValue.TabIndex = 1;
+            this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             // 
             // tableDataEditTop
             // 

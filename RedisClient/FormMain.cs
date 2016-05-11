@@ -281,13 +281,10 @@ namespace Gnllk.RedisClient
             if (format == null) return;
             try
             {
-                lock (classLock)
-                {
-                    string info = string.Format(format, args);
-                    Action<string> set = _ => { labInfo.Text = _; };
-                    if (InvokeRequired) Invoke(set, info);
-                    else set(info);
-                }
+                string info = string.Format(format, args);
+                Action<string> set = _ => { labInfo.Text = _; };
+                if (InvokeRequired) Invoke(set, info);
+                else set(info);
             }
             catch (Exception ex)
             {
@@ -424,6 +421,7 @@ namespace Gnllk.RedisClient
                 if (cont.Select(item.DbIndex))
                 {
                     SetPrograss(50);
+                    AppCache.Instance.CurrentKey = item.Key;
                     AppCache.Instance.CurrentGetData = cont.Execute(new RedisCommand(Command.GET, item.Key)).Read<byte[]>(Readers.ReadAsBytes);
                     ShowAppCacheValue();
                     SetPrograss(100);
@@ -499,7 +497,7 @@ namespace Gnllk.RedisClient
                 {
                     SaveFileDialog dialog = new SaveFileDialog();
                     dialog.Filter = "text file (*.txt)|*.txt|raw file (*.*)|*.*";
-                    dialog.FileName = "Default1";
+                    dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
                     if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         if (dialog.FilterIndex == 1)
@@ -951,6 +949,22 @@ namespace Gnllk.RedisClient
         private void btnClearText_Click(object sender, EventArgs e)
         {
             txtValue.Text = string.Empty;
+        }
+
+        private void txtValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.Control && e.KeyCode == Keys.A)
+                {
+                    txtValue.SelectAll();
+                    e.Handled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

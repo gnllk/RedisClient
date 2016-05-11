@@ -29,6 +29,7 @@ namespace Gnllk.RControl
                 if (e.Control && e.KeyCode == Keys.A)
                 {
                     txtValue.SelectAll();
+                    e.Handled = true;
                 }
             }
             catch (Exception ex)

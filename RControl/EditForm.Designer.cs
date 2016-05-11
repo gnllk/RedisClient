@@ -32,10 +32,10 @@
             this.tableControl = new System.Windows.Forms.TableLayoutPanel();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnImportFile = new System.Windows.Forms.Button();
             this.panelName = new System.Windows.Forms.Panel();
             this.labName = new System.Windows.Forms.Label();
             this.txtValue = new System.Windows.Forms.TextBox();
-            this.btnImportFile = new System.Windows.Forms.Button();
             this.tableMain.SuspendLayout();
             this.tableControl.SuspendLayout();
             this.panelName.SuspendLayout();
@@ -103,6 +103,17 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // btnImportFile
+            // 
+            this.btnImportFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnImportFile.Location = new System.Drawing.Point(641, 3);
+            this.btnImportFile.Name = "btnImportFile";
+            this.btnImportFile.Size = new System.Drawing.Size(127, 25);
+            this.btnImportFile.TabIndex = 3;
+            this.btnImportFile.Text = "Import file";
+            this.btnImportFile.UseVisualStyleBackColor = true;
+            this.btnImportFile.Click += new System.EventHandler(this.btnImportFile_Click);
+            // 
             // panelName
             // 
             this.panelName.Controls.Add(this.labName);
@@ -133,17 +144,7 @@
             this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtValue.Size = new System.Drawing.Size(1037, 430);
             this.txtValue.TabIndex = 2;
-            // 
-            // btnImportFile
-            // 
-            this.btnImportFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnImportFile.Location = new System.Drawing.Point(641, 3);
-            this.btnImportFile.Name = "btnImportFile";
-            this.btnImportFile.Size = new System.Drawing.Size(127, 25);
-            this.btnImportFile.TabIndex = 3;
-            this.btnImportFile.Text = "Import file";
-            this.btnImportFile.UseVisualStyleBackColor = true;
-            this.btnImportFile.Click += new System.EventHandler(this.btnImportFile_Click);
+            this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             // 
             // EditForm
             // 

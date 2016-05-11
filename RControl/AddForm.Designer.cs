@@ -146,6 +146,7 @@
             this.txtValue.Size = new System.Drawing.Size(1037, 430);
             this.txtValue.TabIndex = 2;
             this.txtValue.Enter += new System.EventHandler(this.txtValue_Enter);
+            this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             this.txtValue.Leave += new System.EventHandler(this.txtValue_Leave);
             // 
             // AddForm

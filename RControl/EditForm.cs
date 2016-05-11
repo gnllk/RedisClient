@@ -59,7 +59,7 @@ namespace Gnllk.RControl
                         {
                             throw new Exception(string.Format("File is large than {0} KB", Math.Round(Int32.MaxValue / 1024.0, 3)));
                         }
-                        txtValue.Text = dialog.FileName;
+                        txtValue.Text = string.Format("The content of file {0}", dialog.FileName);
                         using (BinaryReader reader = new BinaryReader(fs))
                         {
                             mByteData = reader.ReadBytes((int)fs.Length);
@@ -70,6 +70,22 @@ namespace Gnllk.RControl
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void txtValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.Control && e.KeyCode == Keys.A)
+                {
+                    txtValue.SelectAll();
+                    e.Handled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
