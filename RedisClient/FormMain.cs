@@ -498,26 +498,40 @@ namespace Gnllk.RedisClient
                     SaveFileDialog dialog = new SaveFileDialog();
                     dialog.Filter = "text file (*.txt)|*.txt|raw file (*.*)|*.*";
                     dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
+                    string ext = Path.GetExtension(dialog.FileName).ToLower();
+                    if (ext == string.Empty
+                        || ext == ".txt"
+                        || ext == ".log")
+                    {
+                        dialog.FilterIndex = 1;
+                    }
+                    else
+                    {
+                        dialog.FilterIndex = 2;
+                    }
                     if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (dialog.FilterIndex == 1)
+                        if (!string.IsNullOrWhiteSpace(dialog.FileName))
                         {
-                            using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                            if (dialog.FilterIndex == 1)
                             {
-                                var writer = new StreamWriter(file, AppCache.Instance.CurrentEncoding);
-                                writer.Write(txtValue.Text);
-                                writer.Flush();
+                                using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                                {
+                                    var writer = new StreamWriter(file, AppCache.Instance.CurrentEncoding);
+                                    writer.Write(txtValue.Text);
+                                    writer.Flush();
+                                }
                             }
-                        }
-                        else
-                        {
-                            using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                            else
                             {
-                                file.Write(data, 0, data.Length);
-                                file.Flush();
+                                using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                                {
+                                    file.Write(data, 0, data.Length);
+                                    file.Flush();
+                                }
                             }
+                            ShowStatusInfo("File:{0}", dialog.FileName);
                         }
-                        ShowStatusInfo("File:{0}", dialog.FileName);
                     }
                 }
                 else

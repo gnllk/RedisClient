@@ -99,7 +99,7 @@ namespace Gnllk.RControl
                         if (string.IsNullOrWhiteSpace(txtName.Text)
                             || txtName.Text == Resources.LabName)
                         {
-                            txtName.Text = dialog.FileName;
+                            txtName.Text = Path.GetFileName(dialog.FileName);
                         }
                         txtValue.Text = string.Format("The content of file {0}", dialog.FileName);
                         using (BinaryReader reader = new BinaryReader(fs))
