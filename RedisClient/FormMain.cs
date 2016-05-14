@@ -496,12 +496,10 @@ namespace Gnllk.RedisClient
                 if (data != null && data.Length > 0)
                 {
                     SaveFileDialog dialog = new SaveFileDialog();
-                    dialog.Filter = "text file (*.txt)|*.txt|raw file (*.*)|*.*";
+                    dialog.Filter = "Text file (*.txt)|*.txt|Raw file (*.*)|*.*";
                     dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
                     string ext = Path.GetExtension(dialog.FileName).ToLower();
-                    if (ext == string.Empty
-                        || ext == ".txt"
-                        || ext == ".log")
+                    if (string.IsNullOrWhiteSpace(ext))
                     {
                         dialog.FilterIndex = 1;
                     }
@@ -515,7 +513,7 @@ namespace Gnllk.RedisClient
                         {
                             if (dialog.FilterIndex == 1)
                             {
-                                using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                                using (FileStream file = new FileStream(dialog.FileName, FileMode.Create))
                                 {
                                     var writer = new StreamWriter(file, AppCache.Instance.CurrentEncoding);
                                     writer.Write(txtValue.Text);
@@ -524,7 +522,7 @@ namespace Gnllk.RedisClient
                             }
                             else
                             {
-                                using (FileStream file = new FileStream(dialog.FileName, FileMode.CreateNew))
+                                using (FileStream file = new FileStream(dialog.FileName, FileMode.Create))
                                 {
                                     file.Write(data, 0, data.Length);
                                     file.Flush();
