@@ -851,7 +851,11 @@ namespace Gnllk.RedisClient
                     {
                         string desc = GetString(item.Connection.Description, MAX_STRING_LENGTH, true);
                         node.Text = string.Format("{0} ({1})", item.CntName, desc);
-                        //node.ToolTipText = item.Connection.Description;
+                        node.ToolTipText = item.Connection.Description;
+                    }
+                    else
+                    {
+                        node.Text = item.CntName;
                     }
                 }
             }
