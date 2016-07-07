@@ -15,16 +15,16 @@ namespace RClient
             get { return mdDBIndex; }
         }
 
-        protected static string ResolveIPAddress(string hostOrIP)
+        protected static string ResolveIPAddress(string hostOrIP, bool userIPv4 = true)
         {
-            if (string.IsNullOrWhiteSpace(hostOrIP)) throw new ArgumentException("参数不能为空", "hostOrIP");
-            IPHostEntry entry = Dns.GetHostEntry(hostOrIP);
-            if (entry.AddressList == null || !entry.AddressList.Any()) throw new Exception(string.Format("DNS无法解析主机名: {0}", hostOrIP));
+            if (string.IsNullOrWhiteSpace(hostOrIP)) throw new ArgumentException("argument cannot be null or empty", "hostOrIP");
+            IPHostEntry entry = userIPv4 ? Dns.Resolve(hostOrIP) : Dns.GetHostEntry(hostOrIP);
+            if (entry.AddressList == null || !entry.AddressList.Any()) throw new Exception(string.Format("DNS cannot resolve: {0}", hostOrIP));
             return entry.AddressList[0].ToString();
         }
 
-        public RedisDatabase(string hostOrIP, int port, int dbIndex = 0)
-            : base(ResolveIPAddress(hostOrIP), port)
+        public RedisDatabase(string hostOrIP, int port, int dbIndex = 0, bool userIPv4 = true)
+            : base(ResolveIPAddress(hostOrIP, userIPv4), port)
         {
             if (dbIndex > 0 && !Select(dbIndex))
             {
