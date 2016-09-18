@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace RClient
@@ -29,7 +27,7 @@ namespace RClient
                     else
                     {
                         string[] spl = line.Split(':');
-                        sect.Add(spl[0], spl[1]);
+                        sect.Add(spl[0], spl.Length > 1 ? spl[1] : string.Empty);
                     }
                 }
             }

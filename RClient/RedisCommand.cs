@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace RClient
 {
@@ -168,7 +168,8 @@ namespace RClient
 
         public void RemoveLastParameter()
         {
-            Parameters.RemoveAt(Parameters.Count - 1);
+            if (Parameters.Count > 0)
+                Parameters.RemoveAt(Parameters.Count - 1);
         }
     }
 

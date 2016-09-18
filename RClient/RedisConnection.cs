@@ -24,20 +24,27 @@ namespace RClient
 
         public void Close()
         {
-            try
+            if (mSocket != null)
             {
-                if (mSocket.Connected)
+                try
                 {
-                    Execute(new RedisCommand(Command.QUIT));
-                    mSocket.Shutdown(SocketShutdown.Both);
+                    if (mSocket.Connected)
+                    {
+                        Execute(new RedisCommand(Command.QUIT));
+                        mSocket.Shutdown(SocketShutdown.Both);
+                    }
                 }
-            }
-            finally
-            {
-                mSocket.Close();
+                finally
+                {
+                    mSocket.Close();
+                    mSocket = null;
+                }
             }
         }
 
+        /// <summary>
+        /// Call the Close()
+        /// </summary>
         public void Dispose()
         {
             Close();
@@ -46,7 +53,7 @@ namespace RClient
         public IRedisReader Execute(IRedisCommand cmd)
         {
             if (cmd == null) throw new ArgumentNullException("cmd");
-            if (cmd.Command == Command.UNKNOWN) throw new ArgumentException("'UNKNOWN' command can not execute", "cmd");
+            if (cmd.Command == Command.UNKNOWN) throw new ArgumentException("'UNKNOWN' command cannot execute", "cmd");
             if (!mSocket.Connected) mSocket.Connect(mEndPoint);
             byte[] data = cmd.ToBytes();
             int sended = mSocket.Send(data);

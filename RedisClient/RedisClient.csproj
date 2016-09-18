@@ -97,6 +97,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\redis_client.psd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\redis_client.png" />

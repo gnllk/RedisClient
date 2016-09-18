@@ -28,7 +28,7 @@ namespace RClient
         {
             if (dbIndex > 0 && !Select(dbIndex))
             {
-                throw new Exception(string.Format("can not select db: {0}", dbIndex));
+                throw new Exception(string.Format("cannot select db: {0}", dbIndex));
             }
         }
 
