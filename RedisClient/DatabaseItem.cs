@@ -1,16 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using RClient;
 
 namespace Gnllk.RedisClient
 {
-    public class DatabaseItem : ConnectionItem
+    public interface IDatabaseItem : IConnectionItem
+    {
+        int DbIndex { get; }
+        string DbInfo { get; set; }
+        string DbName { get; set; }
+        void UpdateDbInfo();
+        void CheckDbIndex();
+    }
+
+    public class DatabaseItem : ConnectionItem, IDatabaseItem
     {
         public const string EnptyDb = "key=0";
         public const string Keyspace = "Keyspace";
-        public const string KeyspaceSetion = "# Keyspace";
+
         public int DbIndex { get; protected set; }
         public string DbInfo { get; set; }
         public string DbName { get; set; }
@@ -23,8 +30,8 @@ namespace Gnllk.RedisClient
             DbIndex = DbName.GetNumber().ToInt32(0);
         }
 
-        public DatabaseItem(ConnectionItem item, string dbName, string dbInfo = "")
-            : base(item, item.CntName)
+        public DatabaseItem(IConnectionItem item, string dbName, string dbInfo = "")
+            : base(item, item.ConnectionName)
         {
             DbName = dbName;
             DbInfo = dbInfo;
@@ -46,6 +53,12 @@ namespace Gnllk.RedisClient
             {
                 DbInfo = EnptyDb;
             }
+        }
+
+        public void CheckDbIndex()
+        {
+            if (DbIndex != Connection.CurrentIndex)
+                Connection.Select(DbIndex);
         }
     }
 }

@@ -156,6 +156,8 @@
             this.Name = "EditForm";
             this.ShowIcon = false;
             this.Text = "Edit";
+            this.Load += new System.EventHandler(this.EditForm_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.EditForm_KeyUp);
             this.tableMain.ResumeLayout(false);
             this.tableMain.PerformLayout();
             this.tableControl.ResumeLayout(false);

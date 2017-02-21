@@ -37,5 +37,18 @@ namespace Gnllk.RControl
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void TextForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
+        }
+
+        private void TextForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+        }
     }
 }

@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Gnllk.RControl.Properties;
@@ -34,15 +28,49 @@ namespace Gnllk.RControl
             get { return mByteData; }
         }
 
+        public int DbIndex
+        {
+            get
+            {
+                int result = 0;
+                if (int.TryParse(cbb_db.Text.Trim(), out result))
+                {
+                    return result;
+                }
+                throw new Exception("Cannot parse the db number to integer.");
+            }
+            set { cbb_db.Text = value.ToString(); }
+        }
+
         public AddForm()
         {
             InitializeComponent();
+        }
+
+        public AddForm(int dbIndex)
+        {
+            InitializeComponent();
+            DbIndex = dbIndex;
+        }
+
+        public AddForm(string addName)
+        {
+            InitializeComponent();
+            AddName = addName;
+        }
+
+        public AddForm(int dbIndex, string addName)
+        {
+            InitializeComponent();
+            DbIndex = dbIndex;
+            AddName = addName;
         }
 
         private void AddForm_Load(object sender, EventArgs e)
         {
             txtName.Text = Resources.LabName;
             txtValue.Text = Resources.LabValue;
+            KeyPreview = true;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -164,6 +192,14 @@ namespace Gnllk.RControl
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void AddForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                btnCancel_Click(sender, new EventArgs());
             }
         }
     }

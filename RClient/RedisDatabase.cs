@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net;
 
 namespace RClient
@@ -15,10 +13,10 @@ namespace RClient
             get { return mdDBIndex; }
         }
 
-        protected static string ResolveIPAddress(string hostOrIP, bool userIPv4 = true)
+        protected static string ResolveIPAddress(string hostOrIP, bool useIPv4 = true)
         {
             if (string.IsNullOrWhiteSpace(hostOrIP)) throw new ArgumentException("argument cannot be null or empty", "hostOrIP");
-            IPHostEntry entry = userIPv4 ? Dns.Resolve(hostOrIP) : Dns.GetHostEntry(hostOrIP);
+            IPHostEntry entry = useIPv4 ? Dns.Resolve(hostOrIP) : Dns.GetHostEntry(hostOrIP);
             if (entry.AddressList == null || !entry.AddressList.Any()) throw new Exception(string.Format("DNS cannot resolve: {0}", hostOrIP));
             return entry.AddressList[0].ToString();
         }

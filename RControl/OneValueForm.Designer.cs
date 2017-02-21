@@ -67,6 +67,8 @@
             this.Name = "OneValueForm";
             this.ShowIcon = false;
             this.Text = "OneValueForm";
+            this.Load += new System.EventHandler(this.OneValueForm_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OneValueForm_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
 

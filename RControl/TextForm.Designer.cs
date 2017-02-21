@@ -35,22 +35,26 @@
             // 
             this.txtValue.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtValue.Location = new System.Drawing.Point(0, 0);
+            this.txtValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtValue.Multiline = true;
             this.txtValue.Name = "txtValue";
             this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtValue.Size = new System.Drawing.Size(784, 442);
+            this.txtValue.Size = new System.Drawing.Size(1045, 510);
             this.txtValue.TabIndex = 0;
             this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             // 
             // TextForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 442);
+            this.ClientSize = new System.Drawing.Size(1045, 510);
             this.Controls.Add(this.txtValue);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "TextForm";
             this.ShowIcon = false;
             this.Text = "Text";
+            this.Load += new System.EventHandler(this.TextForm_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextForm_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
 

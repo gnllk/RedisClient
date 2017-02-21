@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Gnllk.RedisClient
 {
-    public class ItemBase
+    public interface IItemBase
+    {
+        bool Loading { get; set; }
+        IRedisConnection Connection { get; }
+    }
+
+    public class ItemBase : IItemBase
     {
         public bool Loading { get; set; }
         private IRedisConnection mConnection = null;

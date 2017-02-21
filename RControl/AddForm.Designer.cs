@@ -33,11 +33,15 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnImportFile = new System.Windows.Forms.Button();
+            this.pan_lab_db = new System.Windows.Forms.Panel();
+            this.lab_db = new System.Windows.Forms.Label();
+            this.cbb_db = new System.Windows.Forms.ComboBox();
             this.panelName = new System.Windows.Forms.Panel();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtValue = new System.Windows.Forms.TextBox();
             this.tableMain.SuspendLayout();
             this.tableControl.SuspendLayout();
+            this.pan_lab_db.SuspendLayout();
             this.panelName.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,14 +66,18 @@
             // 
             // tableControl
             // 
-            this.tableControl.ColumnCount = 4;
+            this.tableControl.ColumnCount = 6;
+            this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 93F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
-            this.tableControl.Controls.Add(this.btnSave, 2, 0);
-            this.tableControl.Controls.Add(this.btnCancel, 3, 0);
-            this.tableControl.Controls.Add(this.btnImportFile, 1, 0);
+            this.tableControl.Controls.Add(this.btnSave, 4, 0);
+            this.tableControl.Controls.Add(this.btnCancel, 5, 0);
+            this.tableControl.Controls.Add(this.btnImportFile, 3, 0);
+            this.tableControl.Controls.Add(this.pan_lab_db, 0, 0);
+            this.tableControl.Controls.Add(this.cbb_db, 1, 0);
             this.tableControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableControl.Location = new System.Drawing.Point(4, 476);
             this.tableControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -113,6 +121,51 @@
             this.btnImportFile.Text = "Import file";
             this.btnImportFile.UseVisualStyleBackColor = true;
             this.btnImportFile.Click += new System.EventHandler(this.btnImportFile_Click);
+            // 
+            // pan_lab_db
+            // 
+            this.pan_lab_db.Controls.Add(this.lab_db);
+            this.pan_lab_db.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pan_lab_db.Location = new System.Drawing.Point(3, 3);
+            this.pan_lab_db.Name = "pan_lab_db";
+            this.pan_lab_db.Size = new System.Drawing.Size(34, 25);
+            this.pan_lab_db.TabIndex = 4;
+            // 
+            // lab_db
+            // 
+            this.lab_db.AutoSize = true;
+            this.lab_db.Location = new System.Drawing.Point(5, 5);
+            this.lab_db.Name = "lab_db";
+            this.lab_db.Size = new System.Drawing.Size(23, 15);
+            this.lab_db.TabIndex = 3;
+            this.lab_db.Text = "db";
+            // 
+            // cbb_db
+            // 
+            this.cbb_db.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbb_db.FormattingEnabled = true;
+            this.cbb_db.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"});
+            this.cbb_db.Location = new System.Drawing.Point(43, 3);
+            this.cbb_db.Name = "cbb_db";
+            this.cbb_db.Size = new System.Drawing.Size(87, 23);
+            this.cbb_db.TabIndex = 5;
+            this.cbb_db.Text = "0";
             // 
             // panelName
             // 
@@ -160,9 +213,12 @@
             this.Text = "Add";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AddForm_FormClosing);
             this.Load += new System.EventHandler(this.AddForm_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.AddForm_KeyUp);
             this.tableMain.ResumeLayout(false);
             this.tableMain.PerformLayout();
             this.tableControl.ResumeLayout(false);
+            this.pan_lab_db.ResumeLayout(false);
+            this.pan_lab_db.PerformLayout();
             this.panelName.ResumeLayout(false);
             this.panelName.PerformLayout();
             this.ResumeLayout(false);
@@ -179,5 +235,8 @@
         private System.Windows.Forms.TextBox txtValue;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Button btnImportFile;
+        private System.Windows.Forms.Panel pan_lab_db;
+        private System.Windows.Forms.Label lab_db;
+        private System.Windows.Forms.ComboBox cbb_db;
     }
 }

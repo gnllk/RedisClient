@@ -21,5 +21,18 @@ namespace Gnllk.RControl
             get { return xmlBrowser.DocumentText; }
             set { xmlBrowser.DocumentText = value; }
         }
+
+        private void XmlForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
+        }
+
+        private void XmlForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+        }
     }
 }

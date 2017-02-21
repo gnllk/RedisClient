@@ -1,33 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Gnllk.RedisClient
 {
-    public class ConnectionItem : ItemBase
+    public interface IConnectionItem : IItemBase
     {
-        private string mName = null;
-        public string CntName
+        string ConnectionName { get; set; }
+    }
+
+    public class ConnectionItem : ItemBase, IConnectionItem
+    {
+        private string mConnectionName = null;
+
+        public string ConnectionName
         {
-            get { return mName; }
+            get { return mConnectionName; }
             set
             {
-                if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Name");
-                mName = value;
+                if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("ConnectionName");
+                mConnectionName = value;
             }
         }
 
-        public ConnectionItem(IRedisConnection cont, string cntName)
+        public ConnectionItem(IRedisConnection cont, string connectionName)
             : base(cont)
         {
-            CntName = cntName;
+            ConnectionName = connectionName;
         }
 
-        public ConnectionItem(ItemBase item, string cntName)
+        public ConnectionItem(IItemBase item, string connectionName)
             : base(item.Connection)
         {
-            CntName = cntName;
+            ConnectionName = connectionName;
         }
     }
 }

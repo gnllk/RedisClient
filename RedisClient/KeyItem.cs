@@ -1,12 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using RClient;
 
 namespace Gnllk.RedisClient
 {
-    public class KeyItem : DatabaseItem
+    public interface IKeyItem : IDatabaseItem
+    {
+        string Key { get; set; }
+
+        string Value { get; set; }
+
+        string GetValue(Encoding encoding = null);
+
+        bool SetValue(byte[] value);
+
+        bool SetValue(string value, Encoding encoding = null);
+
+        bool Rename(string newName);
+    }
+
+    public class KeyItem : DatabaseItem, IKeyItem
     {
         public string Key { get; set; }
 
@@ -62,13 +75,13 @@ namespace Gnllk.RedisClient
             Key = key;
         }
 
-        public KeyItem(DatabaseItem item, string key)
+        public KeyItem(IDatabaseItem item, string key)
             : base(item, item.DbName, item.DbInfo)
         {
             Key = key;
         }
 
-        public KeyItem(ConnectionItem item, string dbName, string key, string dbInfo = "")
+        public KeyItem(IConnectionItem item, string dbName, string key, string dbInfo = "")
             : base(item, dbName, dbInfo)
         {
             Key = key;

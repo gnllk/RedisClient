@@ -88,5 +88,18 @@ namespace Gnllk.RControl
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void EditForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                btnCancel_Click(sender, new EventArgs());
+            }
+        }
+
+        private void EditForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
+        }
     }
 }

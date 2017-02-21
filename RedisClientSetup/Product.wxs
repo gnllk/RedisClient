@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <?define var.Version = "1.0.0.1"?>
+  <?define var.Version = "1.0.0.2"?>
   <?define var.UpgradeCode = "04996b62-3500-4b6c-a5f7-1b3495f959c7"?>
   <?define var.ProductID = "CEE27F9D-4330-4C92-8389-293FFC1CECD0"?>
 
@@ -67,7 +67,7 @@
       <Component Id="ApplicationShortcut" Guid="A28380EB-D380-4293-8D79-21A0331EA160">
         <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="RedisClient"
-                  Description="RedisClient for showing Kohler configuration object"
+                  Description="Redis Client for blowering redis db"
                   Target="[INSTALLFOLDER]RedisClient.exe"
                   WorkingDirectory="INSTALLFOLDER"/>
 

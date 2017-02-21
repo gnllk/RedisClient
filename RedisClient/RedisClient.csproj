@@ -53,6 +53,10 @@
     <Compile Include="AppCache.cs" />
     <Compile Include="Common\PasswordHelper.cs" />
     <Compile Include="Common\RC4Helper.cs" />
+    <Compile Include="Common\StringHelper.cs" />
+    <Compile Include="ConnectionNode.cs" />
+    <Compile Include="DbNode.cs" />
+    <Compile Include="ImageIndex.cs" />
     <Compile Include="IRedisConnection.cs" />
     <Compile Include="Common\JsonHelper.cs" />
     <Compile Include="Common\XmlHelper.cs" />
@@ -69,6 +73,7 @@
     <Compile Include="ItemBase.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="KeyItem.cs" />
+    <Compile Include="KeyNode.cs" />
     <Compile Include="Manager\ConfigManager.cs" />
     <Compile Include="Manager\ManagerBase.cs" />
     <Compile Include="Program.cs" />

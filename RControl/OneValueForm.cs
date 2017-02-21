@@ -62,5 +62,18 @@ namespace Gnllk.RControl
                 e.Handled = true;
             }
         }
+
+        private void OneValueForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+        }
+
+        private void OneValueForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
+        }
     }
 }
