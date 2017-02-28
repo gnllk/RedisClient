@@ -1,4 +1,4 @@
-﻿namespace Gnllk.RedisClient.Common
+﻿namespace Gnllk.JCommon.Helper
 {
     public static class StringHelper
     {

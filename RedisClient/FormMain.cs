@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Reflection;
@@ -10,17 +9,13 @@ using System.IO;
 using RClient;
 using Gnllk.RedisClient.Manager;
 using Gnllk.RControl;
-using Gnllk.RedisClient.Common;
+using Gnllk.JCommon.Helper;
 
 namespace Gnllk.RedisClient
 {
     public partial class FormMain : Form
     {
         #region Properties
-
-        public readonly string[] EncodingName = new string[] { "gb2312", "utf-16", "unicodeFFFE", "Windows-1252", "x-mac-korean", "x-mac-chinesesimp", "utf-32", "utf-32BE", "us-ascii", "x-cp20936", "x-cp20949", "iso-8859-1", "iso-8859-8", "iso-8859-8-i", "iso-2022-jp", "csISO2022JP", "iso-2022-kr", "x-cp50227", "euc-jp", "EUC-CN", "euc-kr", "hz-gb-2312", "GB18030", "x-iscii-de", "x-iscii-be", "x-iscii-ta", "x-iscii-te", "x-iscii-as", "x-iscii-or", "x-iscii-ka", "x-iscii-ma", "x-iscii-gu", "x-iscii-pa", "utf-7", "utf-8" };
-
-        public const string DefaultEncodingName = "utf-8";
 
         public const string DeleteAlertMsg = "Are you sure to delete?";
 
@@ -30,21 +25,20 @@ namespace Gnllk.RedisClient
 
         public const int MAX_STRING_LENGTH = 100;
 
-        private static object classLock = new object();
-
-        private object GetValueLock = new object();
+        public IPluginManager PluginsManager = PluginManager.Instance;
 
         #endregion Properties
 
         public FormMain()
         {
             InitializeComponent();
-            tvDataTree.KeyUp += new KeyEventHandler(tvDataTree_KeyUp);
+            cbbShowAs.SelectedIndex = 0;
             try
             {
-                FileVersionInfo version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-                this.Text = string.Format("{0} (version: {1})", this.Text, version.ProductVersion);
-                splitMain.SplitterDistance = (int)(this.Width / 2d);
+                tvDataTree.KeyUp += new KeyEventHandler(tvDataTree_KeyUp);
+                var version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+                Text = string.Format("{0} (version: {1})", Text, version.ProductVersion);
+                splitMain.SplitterDistance = (int)(Width / 2d);
                 tvDataTree.Select();
             }
             catch (Exception ex)
@@ -53,12 +47,26 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private void InitEncoding()
+        private bool Check(ConnectionNode node)
         {
-            cbbEncoding.DataSource = EncodingName;
-            cbbEncoding.SelectedItem = string.IsNullOrWhiteSpace(ConfigManager.Instance.Config.Encoding)
-                || !EncodingName.Contains(ConfigManager.Instance.Config.Encoding)
-                ? DefaultEncodingName : ConfigManager.Instance.Config.Encoding;
+            return !(node == null || node.ConnectionItem == null || node.ConnectionItem.Loading);
+        }
+
+        private bool Check(DbNode node)
+        {
+            return !(node == null || node.DatabaseItem == null || node.DatabaseItem.Loading);
+        }
+
+        private bool Check(KeyNode node)
+        {
+            return !(node == null || node.KeyItem == null || node.KeyItem.Loading);
+        }
+
+        private void AddPluginNameToShowAsCombobox(string pluginName)
+        {
+            Action<object> set = _ => { cbbShowAs.Items.Add(_); };
+            if (InvokeRequired) Invoke(set, pluginName);
+            else set(pluginName);
         }
 
         private void Show(string format, params object[] args)
@@ -99,23 +107,87 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private void ShowAppCacheValue(int showLength = 320)
+        private void ShowAppCacheValue()
         {
             try
             {
-                Encoding encoding = AppCache.Instance.CurrentEncoding;
-                byte[] data = AppCache.Instance.CurrentGetData;
-                string str = data == null ? string.Empty : encoding.GetString(data);
-                if (str.Length > showLength) str = str.Substring(0, showLength) + "...";
-                Action<string> set = _ =>
-                {
-                    Cursor.Current = Cursors.WaitCursor;
-                    txtValue.Text = _;
-                    Cursor.Current = Cursors.Default;
-                };
-                if (InvokeRequired) Invoke(set, str);
-                else set(str);
+                var data = AppCache.Instance.CurrentGetData;
+                var key = AppCache.Instance.CurrentKey;
+                if (string.IsNullOrWhiteSpace(key) || !PluginsManager.Plugins.Any()) return;
 
+                Action<string, byte[]> set = (p1, p2) =>
+                {
+                    var showAsName = cbbShowAs.SelectedItem.ToString();
+                    var plugin = PluginsManager.DefaultPlugin;
+                    foreach (var p in PluginsManager.Plugins)
+                    {
+                        if (cbbShowAs.SelectedIndex == 0)
+                        {
+                            // Auto
+                            if (p.ShouldShowAs(key, data))
+                                plugin = p;
+                        }
+                        else
+                        {
+                            // Manual
+                            if (showAsName.Equals(p.GetName()))
+                                plugin = p;
+                        }
+                    }
+                    if (plugin != null)
+                    {
+                        if (plugin is Control)
+                        {
+                            var newControl = (Control)plugin;
+                            if (pluginViewBox.Controls.Count > 0)
+                            {
+                                var oldControl = pluginViewBox.Controls[0];
+                                if (!newControl.Equals(oldControl))
+                                {
+                                    pluginViewBox.Controls.Clear();
+                                    pluginViewBox.Controls.Add(newControl);
+                                    var oldPlugin = oldControl as IShowAsPlugin;
+                                    if (oldPlugin != null) SafetyCall(oldPlugin.OnBlur);
+                                }
+                            }
+                            else
+                            {
+                                pluginViewBox.Controls.Add(newControl);
+                            }
+                        }
+                        SafetyCall(() => { plugin.OnShowAs(p1, p2); });
+                    }
+                };
+
+                if (InvokeRequired) Invoke(set, key, data);
+                else set(key, data);
+
+            }
+            catch (Exception ex)
+            {
+                Show(ex.Message);
+            }
+        }
+
+        private void SafetyCall(Action action)
+        {
+            if (action == null) return;
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                Show(ex.Message);
+            }
+        }
+
+        private void SafetyCall(Action<object> action, object arg)
+        {
+            if (action == null) return;
+            try
+            {
+                action(arg);
             }
             catch (Exception ex)
             {
@@ -172,9 +244,8 @@ namespace Gnllk.RedisClient
 
         private void ShowDbs(ConnectionNode node, bool expand = true)
         {
-            if (node == null || node.ConnectionItem == null || node.ConnectionItem.Loading) return;
+            if (!Check(node)) return;
             var item = node.ConnectionItem;
-            if (item.Loading) return;
             try
             {
                 item.Loading = true;
@@ -184,23 +255,24 @@ namespace Gnllk.RedisClient
                 ShowStatusInfo("read database infomation from {0}", cont.EndPoint);
                 AuthIfHasPwd(cont);
 
-                var info = cont.Execute(new RedisCommand(Command.INFO)).Read<Info>(InfoReader.ReadAsInfo);
+                var info = cont.Execute(new RedisCommand(Command.INFO)).Read(InfoReader.ReadAsInfo);
                 var keys = info[KeyspaceSetion];
                 node.ChildData = keys;
+
                 SetPrograss(50);
-                if (keys != null && keys.Any())
+                var count = keys?.Count ?? 0;
+                if (count > 0)
                 {
-                    double stepValue = 50;
-                    double step = (double)stepValue / (double)keys.Count;
+                    double prograss = 50;
+                    double step = prograss / count;
                     foreach (var db in keys)
                     {
                         AddNode(node, CreateDbNode(db.Key, db.Value, item));
-                        SetPrograss((int)(stepValue += step));
+                        SetPrograss((int)(prograss += step));
                     }
                     NodeExpandOrNot(node, expand);
                 }
-                ShowStatusInfo("read {0} database", keys == null ? 0 : keys.Count);
-
+                ShowStatusInfo("read {0} database", count);
                 SetPrograss(100);
             }
             catch (Exception ex)
@@ -213,7 +285,7 @@ namespace Gnllk.RedisClient
 
         private void ShowKeys(DbNode node, bool expand = true)
         {
-            if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
+            if (!Check(node)) return;
             var item = node.DatabaseItem;
             try
             {
@@ -223,7 +295,7 @@ namespace Gnllk.RedisClient
                 if (item.Connection.Select(item.DbIndex))
                 {
                     SetPrograss(25);
-                    var keys = item.Connection.Execute(new RedisCommand(Command.KEYS, "*")).Read<List<string>>(Readers.ReadAsList);
+                    var keys = item.Connection.Execute(new RedisCommand(Command.KEYS, "*")).Read(Readers.ReadAsList);
                     ShowStatusKey(item.DbName);
                     node.ChildData = keys;
                     node.ViewData = keys;
@@ -242,15 +314,16 @@ namespace Gnllk.RedisClient
 
         private void AddKeysToTree(DbNode node, IEnumerable<string> keys, int prograssStart = 0)
         {
-            int count = keys == null ? 0 : keys.Count();
+            int count = keys?.Count() ?? 0;
             if (count > 0)
             {
-                double stepValue = prograssStart;
-                double step = stepValue / count;
                 try
                 {
                     if (InvokeRequired) Invoke(new Action(tvDataTree.BeginUpdate));
                     else tvDataTree.BeginUpdate();
+
+                    double stepValue = prograssStart;
+                    double step = stepValue / count;
                     foreach (var key in keys)
                     {
                         AddNode(node, CreateKeyNode(key, node.DatabaseItem));
@@ -273,9 +346,8 @@ namespace Gnllk.RedisClient
 
         private void ShowValue(KeyNode node, bool expand = true)
         {
-            if (node == null || node.KeyItem == null) return;
+            if (!Check(node)) return;
             var item = node.KeyItem;
-            if (item.Loading) return;
             try
             {
                 item.Loading = true;
@@ -286,13 +358,13 @@ namespace Gnllk.RedisClient
                 {
                     SetPrograss(50);
                     AppCache.Instance.CurrentKey = item.Key;
-                    AppCache.Instance.CurrentGetData = cont.Execute(new RedisCommand(Command.GET, item.Key)).Read<byte[]>(Readers.ReadAsBytes);
+                    AppCache.Instance.CurrentGetData = cont.Execute(new RedisCommand(Command.GET, item.Key)).Read(Readers.ReadAsBytes);
                     ShowAppCacheValue();
                     SetPrograss(100);
                 }
                 else
                 {
-                    Show(string.Format("Can not select db:{0}", item.DbIndex));
+                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
                 }
             }
             catch (Exception ex) { ShowStatusInfo(ex.Message); }
@@ -301,8 +373,8 @@ namespace Gnllk.RedisClient
 
         public ConnectionNode CreateConnectionNode(string connectionName, IRedisConnection redisConnection)
         {
-            string desc = StringHelper.GetString(redisConnection.Description, MAX_STRING_LENGTH, true);
-            string text = string.IsNullOrWhiteSpace(desc) ?
+            var desc = StringHelper.GetString(redisConnection.Description, MAX_STRING_LENGTH, true);
+            var text = string.IsNullOrWhiteSpace(desc) ?
                 connectionName : string.Format("{0} ({1})", connectionName, desc);
 
             var result = new ConnectionNode(text);
@@ -337,7 +409,7 @@ namespace Gnllk.RedisClient
         {
             if (!string.IsNullOrWhiteSpace(cont.Password))
             {
-                var authInfo = cont.Execute(new RedisCommand(Command.AUTH, cont.Password)).Read<string>(Readers.ReadAsString);
+                var authInfo = cont.Execute(new RedisCommand(Command.AUTH, cont.Password)).Read(Readers.ReadAsString);
                 if (!RedisUtil.IsOK(authInfo))
                 {
                     Show(authInfo);
@@ -364,32 +436,23 @@ namespace Gnllk.RedisClient
 
         private void ClearChildNode(TreeNode node)
         {
-            try
-            {
-                if (node == null) return;
-                Action set = () => { node.Nodes.Clear(); };
-                if (InvokeRequired) Invoke(set);
-                else set();
-            }
-            catch (Exception ex)
-            {
-                Show(ex.Message);
-            }
+            if (node == null || node.Nodes == null) return;
+            Action set = () => { node.Nodes.Clear(); };
+            if (InvokeRequired) Invoke(set);
+            else set();
         }
 
         private void AddNode(TreeNode parent, TreeNode child, bool insertToHead = false)
         {
-            if (parent == null && child == null) return;
-            lock (classLock)
+            if (parent == null || child == null) return;
+
+            Action<TreeNode> add = _ =>
             {
-                Action<TreeNode> add = _ =>
-                {
-                    if (insertToHead) parent.Nodes.Insert(0, _);
-                    else parent.Nodes.Add(_);
-                };
-                if (InvokeRequired) Invoke(add, child);
-                else add(child);
-            }
+                if (insertToHead) parent.Nodes.Insert(0, _);
+                else parent.Nodes.Add(_);
+            };
+            if (InvokeRequired) Invoke(add, child);
+            else add(child);
         }
 
         public void NodeExpandOrNot(TreeNode node, bool expand = true)
@@ -436,18 +499,19 @@ namespace Gnllk.RedisClient
 
         private void AddKeyValueToDb(DbNode node)
         {
+            if (!Check(node)) return;
+            var item = node.DatabaseItem;
             try
             {
-                if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
-                var item = node.DatabaseItem;
+                item.Loading = true;
                 using (AddForm form = new AddForm(item.DbIndex))
                 {
                     if (form.ShowDialog(this) == DialogResult.OK)
                     {
                         if (item.Connection.Select(form.DbIndex))
                         {
-                            string name = form.AddName;
-                            object val = form.ByteData == null ? (object)form.AddValue : (object)form.ByteData;
+                            var name = form.AddName;
+                            var val = (object)form.ByteData ?? form.AddValue;
                             if (item.Connection.Execute(new RedisCommand(Command.SET, name, val)).Read<bool>(Readers.IsOK))
                             {
                                 UpdateDbInfo(node);
@@ -466,10 +530,8 @@ namespace Gnllk.RedisClient
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Show(ex.Message);
-            }
+            catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
         }
 
         private void UpdateValue(KeyNode node)
@@ -500,15 +562,17 @@ namespace Gnllk.RedisClient
             }
             else
             {
-                Show(string.Format("Can not select db:{0}", item.DbIndex));
+                Show(string.Format("Cannot select db:{0}", item.DbIndex));
             }
         }
 
         private void SortKeys(DbNode node)
         {
+            if (!Check(node)) return;
+            var item = node.DatabaseItem;
             try
             {
-                if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
+                item.Loading = true;
                 var keys = node.ViewData;
                 if (keys != null && keys.Any())
                 {
@@ -520,16 +584,18 @@ namespace Gnllk.RedisClient
                 }
             }
             catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
         }
 
         private void SortKeysAsync(DbNode node)
         {
-            Task.Factory.StartNew(new Action<object>(_ => { SortKeys((DbNode)_); }), node);
+            if (!Check(node)) return;
+            Task.Factory.StartNew(new Action(() => { SortKeys(node); }));
         }
 
         private void SearchKeysAsync(DbNode node)
         {
-            if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
+            if (!Check(node)) return;
             using (var form = new OneValueForm() { Text = "Search" })
             {
                 form.StartPosition = FormStartPosition.CenterScreen;
@@ -542,84 +608,85 @@ namespace Gnllk.RedisClient
 
         private void SearchKeys(DbNode node, string keyWord)
         {
+            if (!Check(node) || string.IsNullOrWhiteSpace(keyWord)) return;
+            var item = node.DatabaseItem;
             try
             {
-                if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
+                item.Loading = true;
                 var originalKeys = node.ChildData;
-                if (originalKeys == null || !originalKeys.Any() || string.IsNullOrWhiteSpace(keyWord)) return;
+                if (originalKeys == null || !originalKeys.Any()) return;
 
                 ClearChildNode(node);
                 var lowerCase = keyWord.ToLower();
-                node.ViewData = originalKeys.FindAll(item => item.ToLower().Contains(lowerCase));
+                node.ViewData = originalKeys.FindAll(_ => _.ToLower().Contains(lowerCase));
                 if (node.ViewData == null) return;
                 AddKeysToTree(node, node.ViewData, 0);
                 NodeExpandOrNot(node, true);
             }
             catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
         }
 
         private void Rename(KeyNode node)
         {
-            if (node == null || node.KeyItem == null) return;
+            if (!Check(node)) return;
             var item = node.KeyItem;
-            if (item.Connection.Select(item.DbIndex))
+            try
             {
-                using (var form = new OneValueForm()
+                item.Loading = true;
+                if (!item.Connection.Select(item.DbIndex))
                 {
-                    Text = "New name",
-                    Value = item.Key
-                })
+                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
+                    return;
+                }
+                using (var form = new OneValueForm())
                 {
-                    if (form.ShowDialog(this) == DialogResult.OK)
-                    {
-                        if (!string.IsNullOrWhiteSpace(form.Value))
-                        {
-                            if (item.Rename(form.Value))
-                                node.Text = form.Value;
-                        }
-                    }
+                    form.Text = "New name";
+                    form.Value = item.Key;
+                    if (form.ShowDialog(this) != DialogResult.OK) return;
+
+                    if (!string.IsNullOrWhiteSpace(form.Value) && item.Rename(form.Value))
+                        node.Text = form.Value;
                 }
             }
-            else
-            {
-                Show(string.Format("Can not select db:{0}", item.DbIndex));
-            }
+            catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
         }
 
         private void RefreshDbAsync(DbNode node)
         {
-            if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
-            Task.Factory.StartNew(new Action<object>(_ => { UpdateDbInfo((DbNode)_); }), node);
-            ClearChildNode(node);
-            Task.Factory.StartNew(new Action<object>(_ => { ShowKeys((DbNode)_); }), node);
+            if (!Check(node)) return;
+            Task.Factory.StartNew(new Action<object>(_ =>
+            {
+                UpdateDbInfo((DbNode)_);
+                ClearChildNode((DbNode)_);
+                ShowKeys((DbNode)_);
+            }), node);
         }
 
         private void UpdateDbInfo(DbNode node)
         {
+            if (!Check(node)) return;
+            var item = node.DatabaseItem;
             try
             {
-                if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
-                var item = node.DatabaseItem;
-                if (item == null) return;
+                item.Loading = true;
                 item.UpdateDbInfo();
-                string text = string.Format("{0}({1})", item.DbName, item.DbInfo);
                 ShowStatusKey(item.DbName);
-                SetNodeText(node, text);
+                SetNodeText(node, string.Format("{0}({1})", item.DbName, item.DbInfo));
             }
-            catch (Exception ex)
-            {
-                Show(ex.Message);
-            }
+            catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
         }
 
         private void RemoveDb(DbNode node)
         {
-            if (node == null || node.DatabaseItem == null || node.DatabaseItem.Loading) return;
+            if (!Check(node)) return;
             DeleteAlert(yes =>
             {
                 if (!yes) return;
                 var item = node.DatabaseItem;
-                if (item.Connection.Execute(new RedisCommand(Command.FLUSHDB)).Read<bool>(Readers.IsOK))
+                if (item.Connection.Execute(new RedisCommand(Command.FLUSHDB)).Read(Readers.IsOK))
                 {
                     RemoveNode(node);
                 }
@@ -632,14 +699,14 @@ namespace Gnllk.RedisClient
 
         private void RefreshConnectionAsync(ConnectionNode node)
         {
-            if (node == null || node.ConnectionItem == null || node.ConnectionItem.Loading) return;
+            if (!Check(node)) return;
             ClearChildNode(node);
-            Task.Factory.StartNew(new Action<object>(_ => { ShowDbs((ConnectionNode)_); }), node);
+            Task.Factory.StartNew(new Action(() => { ShowDbs(node); }));
         }
 
         private void RemoveConnection(ConnectionNode node)
         {
-            if (node == null || node.ConnectionItem == null || node.ConnectionItem.Loading) return;
+            if (!Check(node)) return;
             DeleteAlert(yes =>
             {
                 if (!yes) return;
@@ -651,32 +718,30 @@ namespace Gnllk.RedisClient
 
         private void RefreshKeyAsync(KeyNode node)
         {
-            Task.Factory.StartNew(new Action<object>(_ => { ShowValue((KeyNode)_); }), node);
+            Task.Factory.StartNew(new Action(() => { ShowValue(node); }));
         }
 
         private void RemoveKey(KeyNode node)
         {
-            if (node == null || node.KeyItem == null || node.KeyItem.Loading) return;
+            if (!Check(node)) return;
             DeleteAlert(yes =>
             {
                 if (!yes) return;
                 var item = node.KeyItem;
-                if (item.Connection.Select(item.DbIndex))
+                if (!item.Connection.Select(item.DbIndex))
                 {
-                    if (item.Connection.Execute(new RedisCommand(Command.DEL, item.Key)).Read<int>(Readers.ReadAsInt) > 0)
-                    {
-                        UpdateDbInfo(node.Parent as DbNode);
-                        (node.Parent as DbNode).ChildData.Remove(item.Key);
-                        RemoveNode(node);
-                    }
-                    else
-                    {
-                        Show("Delete key fail.");
-                    }
+                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
+                    return;
+                }
+                if (item.Connection.Execute(new RedisCommand(Command.DEL, item.Key)).Read(Readers.ReadAsInt) > 0)
+                {
+                    UpdateDbInfo(node.Parent as DbNode);
+                    (node.Parent as DbNode).ChildData.Remove(item.Key);
+                    RemoveNode(node);
                 }
                 else
                 {
-                    Show(string.Format("Can not select db:{0}", item.DbIndex));
+                    Show("Delete key fail.");
                 }
             }, string.Format(DeleteAlertMsgFmt, node.KeyItem.Key));
         }
@@ -748,7 +813,7 @@ namespace Gnllk.RedisClient
             var item = node.ConnectionItem;
             using (var form = new OneValueForm() { Text = "Write some comments", Value = item.Connection.Description })
             {
-                if (form.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                if (form.ShowDialog(this) == DialogResult.OK)
                 {
                     item.Connection.Description = form.Value.Trim();
                     if (!string.IsNullOrEmpty(item.Connection.Description))
@@ -767,14 +832,13 @@ namespace Gnllk.RedisClient
 
         private void DeleteAlert(Action<bool> deleteAction, string alert = DeleteAlertMsg)
         {
-            if (MessageBox.Show(alert, "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2)
-                == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show(alert, "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                if (deleteAction != null) deleteAction(true);
+                deleteAction?.Invoke(true);
             }
             else
             {
-                if (deleteAction != null) deleteAction(false);
+                deleteAction?.Invoke(false);
             }
         }
 
@@ -784,7 +848,9 @@ namespace Gnllk.RedisClient
         {
             try
             {
-                ConfigManager.Instance.LoadConnection();
+                ConfigManager.Instance.LoadConfig();
+                PluginsManager.AppConfig = ConfigManager.Instance.Config;
+                PluginsManager.OnPluginsInitialized += PluginsManager_OnPluginsInitialized;
             }
             catch (Exception ex)
             {
@@ -792,12 +858,20 @@ namespace Gnllk.RedisClient
             }
             try
             {
-                InitEncoding();
                 ShowConnections(ConfigManager.Instance.Config.Connections);
             }
             catch (Exception ex)
             {
                 Show("Initialize control fail: {0}", ex.Message);
+            }
+        }
+
+        private void PluginsManager_OnPluginsInitialized(ICollection<IShowAsPlugin> plugins)
+        {
+            if (plugins == null || plugins.Count == 0) return;
+            foreach (var plugin in plugins)
+            {
+                AddPluginNameToShowAsCombobox(plugin.GetName());
             }
         }
 
@@ -855,29 +929,11 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private void cbbEncoding_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                AppCache.Instance.CurrentEncoding = Encoding.GetEncoding(cbbEncoding.SelectedValue.ToString());
-            }
-            catch (Exception ex)
-            {
-                AppCache.Instance.CurrentEncoding = Encoding.UTF8;
-                cbbEncoding.SelectedItem = DefaultEncodingName;
-                Show(ex.Message);
-            }
-            finally
-            {
-                ShowAppCacheValue();
-            }
-        }
-
         private void OnDbNodeMenuClick(object sender, EventArgs e)
         {
             try
             {
-                this.UseWaitCursor = true;
+                UseWaitCursor = true;
                 MenuItem menu = sender as MenuItem;
                 if (menu != null)
                 {
@@ -913,7 +969,7 @@ namespace Gnllk.RedisClient
             }
             finally
             {
-                this.UseWaitCursor = false;
+                UseWaitCursor = false;
             }
         }
 
@@ -1036,79 +1092,40 @@ namespace Gnllk.RedisClient
             e.Handled = true;
         }
 
-        private void btnShowAllText_Click(object sender, EventArgs e)
-        {
-            Task.Factory.StartNew(() => ShowAppCacheValue(Int32.MaxValue));
-        }
-
-        private void btnClearText_Click(object sender, EventArgs e)
-        {
-            txtValue.Text = string.Empty;
-        }
-
-        private void txtValue_KeyDown(object sender, KeyEventArgs e)
+        private void btnExportFile_Click(object sender, EventArgs e)
         {
             try
             {
-                if (e.Control && e.KeyCode == Keys.A)
+                var data = AppCache.Instance.CurrentGetData;
+                if (data == null && data.Length == 0)
                 {
-                    txtValue.SelectAll();
-                    e.Handled = true;
+                    ShowStatusInfo("No data");
+                    return;
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
 
-        private void btnExport_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                byte[] data = AppCache.Instance.CurrentGetData;
-                if (data != null && data.Length > 0)
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "Text file (*.txt)|*.txt|Raw file (*.*)|*.*";
+                dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
+                string ext = Path.GetExtension(dialog.FileName).ToLower();
+                if (string.IsNullOrWhiteSpace(ext))
                 {
-                    SaveFileDialog dialog = new SaveFileDialog();
-                    dialog.Filter = "Text file (*.txt)|*.txt|Raw file (*.*)|*.*";
-                    dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
-                    string ext = Path.GetExtension(dialog.FileName).ToLower();
-                    if (string.IsNullOrWhiteSpace(ext))
-                    {
-                        dialog.FilterIndex = 1;
-                    }
-                    else
-                    {
-                        dialog.FilterIndex = 2;
-                    }
-                    if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        if (!string.IsNullOrWhiteSpace(dialog.FileName))
-                        {
-                            if (dialog.FilterIndex == 1)
-                            {
-                                using (FileStream file = new FileStream(dialog.FileName, FileMode.Create))
-                                {
-                                    var writer = new StreamWriter(file, AppCache.Instance.CurrentEncoding);
-                                    writer.Write(txtValue.Text);
-                                    writer.Flush();
-                                }
-                            }
-                            else
-                            {
-                                using (FileStream file = new FileStream(dialog.FileName, FileMode.Create))
-                                {
-                                    file.Write(data, 0, data.Length);
-                                    file.Flush();
-                                }
-                            }
-                            ShowStatusInfo("File:{0}", dialog.FileName);
-                        }
-                    }
+                    dialog.FilterIndex = 1;
                 }
                 else
                 {
-                    ShowStatusInfo("No data");
+                    dialog.FilterIndex = 2;
+                }
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (!string.IsNullOrWhiteSpace(dialog.FileName))
+                    {
+                        using (FileStream file = new FileStream(dialog.FileName, FileMode.Create))
+                        {
+                            file.Write(data, 0, data.Length);
+                            file.Flush();
+                        }
+                        ShowStatusInfo("File:{0}", dialog.FileName);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1122,8 +1139,8 @@ namespace Gnllk.RedisClient
             try
             {
                 ShowStatusInfo("Saving configuration...");
-                ConfigManager.Instance.Config.Encoding = cbbEncoding.SelectedItem.ToString();
-                ConfigManager.Instance.SaveConnection();
+                PluginsManager.DisposePlugins();
+                ConfigManager.Instance.SaveConfig();
             }
             catch (Exception ex)
             {
@@ -1137,6 +1154,18 @@ namespace Gnllk.RedisClient
             catch (Exception ex)
             {
                 Show("free connection error: {0}", ex.Message);
+            }
+        }
+
+        private void cbbShowAs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Task.Factory.StartNew(ShowAppCacheValue);
+            }
+            catch (Exception ex)
+            {
+                Show("Error: {0}", ex.Message);
             }
         }
 

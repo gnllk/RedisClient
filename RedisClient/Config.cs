@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 using System.Runtime.Serialization;
 
 namespace Gnllk.RedisClient
@@ -11,6 +8,8 @@ namespace Gnllk.RedisClient
     public class Config
     {
         private Dictionary<string, RedisConnection> mConnections = null;
+
+        private Dictionary<string, string> mPluginsConfigString = null;
 
         [DataMember]
         public Dictionary<string, RedisConnection> Connections
@@ -28,19 +27,19 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private string mEncoding = null;
-
         [DataMember]
-        public string Encoding
+        public Dictionary<string, string> PluginsConfigString
         {
             get
             {
-                if (mEncoding == null) mEncoding = "utf-8";
-                return mEncoding;
+                if (mPluginsConfigString == null)
+                    mPluginsConfigString = new Dictionary<string, string>();
+                return mPluginsConfigString;
             }
-            set
+            protected set
             {
-                mEncoding = value;
+                if (value == null) throw new ArgumentNullException("PluginsCondigString");
+                mPluginsConfigString = value;
             }
         }
     }

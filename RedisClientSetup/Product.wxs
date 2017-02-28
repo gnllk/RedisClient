@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <?define var.Version = "1.0.0.2"?>
+  <?define var.Version = "1.0.0.3"?>
   <?define var.UpgradeCode = "04996b62-3500-4b6c-a5f7-1b3495f959c7"?>
   <?define var.ProductID = "CEE27F9D-4330-4C92-8389-293FFC1CECD0"?>
 
@@ -20,6 +20,8 @@
 
     <Feature Id="ProductFeature" Title="RedisClientSetup" Level="1"  >
       <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ShowAsTextPluginComponent" />
+      <ComponentRef Id="ShowAsImagePluginComponent" />
       <ComponentRef Id="ApplicationShortcut" />
       <ComponentRef Id="DesktopFolderShortcut" />
     </Feature>
@@ -42,7 +44,12 @@
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="RedisClient" />
+        <Directory Id="INSTALLFOLDER" Name="RedisClient" >
+          <Directory Id="Plugins" Name="Plugins">
+            <Directory Id="ShowAsTextPlugin" Name="ShowAsTextPlugin"></Directory>
+            <Directory Id="ShowAsImagePlugin" Name="ShowAsImagePlugin"></Directory>
+          </Directory>
+        </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="RedisClient"/>
@@ -55,11 +62,24 @@
     <DirectoryRef Id="INSTALLFOLDER">
       <Component Id="ProductComponent" Guid="C304FBD9-7446-4906-9548-867D634F73B6">
         <File Id="Gnllk.RControl.dll" Source="$(var.RedisClient.TargetDir)Gnllk.RControl.dll" />
+        <File Id="Gnllk.JCommon.dll" Source="$(var.RedisClient.TargetDir)Gnllk.JCommon.dll" />
         <File Id="RClient.dll" Source="$(var.RedisClient.TargetDir)RClient.dll" />
         <File Id="Config.json" Source="Config.json" />
         <File Id="RedisClient.exe" Source="$(var.RedisClient.TargetDir)RedisClient.exe" />
         <File Id="License.rtf" Source="License.rtf" />
         <File Id="redis_client.ico" Source="redis_client.ico" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ShowAsTextPlugin">
+      <Component Id="ShowAsTextPluginComponent" Guid="CA35F897-C436-4ADB-A8C7-9979E4F1563C">
+        <File Id="ShowAsTextPlugin.dll" Source="$(var.RedisClient.TargetDir)\Plugins\ShowAsTextPlugin\ShowAsTextPlugin.dll" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ShowAsImagePlugin">
+      <Component Id="ShowAsImagePluginComponent" Guid="732936DA-E255-4B76-A99F-4E1F92D40CD5">
+        <File Id="ShowAsImagePlugin.dll" Source="$(var.RedisClient.TargetDir)\Plugins\ShowAsImagePlugin\ShowAsImagePlugin.dll" />
       </Component>
     </DirectoryRef>
 

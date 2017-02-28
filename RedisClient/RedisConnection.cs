@@ -2,7 +2,7 @@
 using RClient;
 using System.Net;
 using System.Runtime.Serialization;
-using Gnllk.RedisClient.Common;
+using Gnllk.JCommon.Helper;
 
 namespace Gnllk.RedisClient
 {

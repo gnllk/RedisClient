@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C95F6755-ED70-405E-A5B9-4D87D46740FE}</ProjectGuid>
+    <ProjectGuid>{03BB1B0E-EE3C-46B5-88DB-4253C089741E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RClient</RootNamespace>
-    <AssemblyName>RClient</AssemblyName>
+    <RootNamespace>ShowAsImagePlugin</RootNamespace>
+    <AssemblyName>ShowAsImagePlugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -33,7 +32,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,31 +43,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
-    <Compile Include="Converter.cs" />
-    <Compile Include="IDataReader.cs" />
-    <Compile Include="InfoReader.cs" />
-    <Compile Include="LineReader.cs" />
-    <Compile Include="MutilItemReader.cs" />
-    <Compile Include="RedisReader.cs" />
-    <Compile Include="IRedisReader.cs" />
-    <Compile Include="IRedisClient.cs" />
-    <Compile Include="IRedisCommand.cs" />
-    <Compile Include="IRedisConnection.cs" />
-    <Compile Include="IRedisDatabase.cs" />
-    <Compile Include="IRedisExecution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RedisClient.cs" />
-    <Compile Include="RedisCommand.cs" />
-    <Compile Include="RedisConnection.cs" />
-    <Compile Include="RedisDatabase.cs" />
-    <Compile Include="RedisUtil.cs" />
-    <Compile Include="ResultType.cs" />
-    <Compile Include="SocketHelper.cs" />
-    <Compile Include="StringExtention.cs" />
-    <Compile Include="StringReaderBase.cs" />
+    <Compile Include="ShowAsImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ShowAsImage.Designer.cs">
+      <DependentUpon>ShowAsImage.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JCommon\JCommon.csproj">
+      <Project>{76815aea-db98-4ef0-a590-8ac84c964365}</Project>
+      <Name>JCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RControl\RControl.csproj">
+      <Project>{44a82dce-35b3-4f49-895b-c8116d7915c9}</Project>
+      <Name>RControl</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ShowAsImage.resx">
+      <DependentUpon>ShowAsImage.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)RedisClient\bin\$(ConfigurationName)\Plugins\$(ProjectName)"
+xcopy /Q /Y /I  "$(TargetPath)" "$(SolutionDir)RedisClient\bin\$(ConfigurationName)\Plugins\$(ProjectName)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

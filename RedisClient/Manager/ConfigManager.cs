@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.IO;
-using System.Xml.Serialization;
-using Gnllk.RedisClient.Common;
+using Gnllk.JCommon.Helper;
 
 namespace Gnllk.RedisClient.Manager
 {
@@ -27,7 +23,7 @@ namespace Gnllk.RedisClient.Manager
             }
         }
 
-        public void LoadConnection()
+        public void LoadConfig()
         {
             using (FileStream file = new FileStream(CONFIG_FILENAME, FileMode.Open, FileAccess.Read))
             {
@@ -36,7 +32,7 @@ namespace Gnllk.RedisClient.Manager
             }
         }
 
-        public void SaveConnection()
+        public void SaveConfig()
         {
             using (FileStream file = new FileStream(CONFIG_FILENAME, FileMode.Create, FileAccess.Write))
             {

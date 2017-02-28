@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C95F6755-ED70-405E-A5B9-4D87D46740FE}</ProjectGuid>
+    <ProjectGuid>{76815AEA-DB98-4EF0-A590-8AC84C964365}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RClient</RootNamespace>
-    <AssemblyName>RClient</AssemblyName>
+    <RootNamespace>Gnllk.JCommon</RootNamespace>
+    <AssemblyName>Gnllk.JCommon</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -34,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,29 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
-    <Compile Include="Converter.cs" />
-    <Compile Include="IDataReader.cs" />
-    <Compile Include="InfoReader.cs" />
-    <Compile Include="LineReader.cs" />
-    <Compile Include="MutilItemReader.cs" />
-    <Compile Include="RedisReader.cs" />
-    <Compile Include="IRedisReader.cs" />
-    <Compile Include="IRedisClient.cs" />
-    <Compile Include="IRedisCommand.cs" />
-    <Compile Include="IRedisConnection.cs" />
-    <Compile Include="IRedisDatabase.cs" />
-    <Compile Include="IRedisExecution.cs" />
+    <Compile Include="Helper\JsonHelper.cs" />
+    <Compile Include="Helper\PasswordHelper.cs" />
+    <Compile Include="Helper\RC4Helper.cs" />
+    <Compile Include="Helper\StringHelper.cs" />
+    <Compile Include="Helper\XmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RedisClient.cs" />
-    <Compile Include="RedisCommand.cs" />
-    <Compile Include="RedisConnection.cs" />
-    <Compile Include="RedisDatabase.cs" />
-    <Compile Include="RedisUtil.cs" />
-    <Compile Include="ResultType.cs" />
-    <Compile Include="SocketHelper.cs" />
-    <Compile Include="StringExtention.cs" />
-    <Compile Include="StringReaderBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

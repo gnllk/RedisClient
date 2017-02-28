@@ -47,19 +47,20 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.panel5 = new System.Windows.Forms.Panel();
             this.btnAddConnect = new System.Windows.Forms.Button();
+            this.panelTree = new System.Windows.Forms.Panel();
             this.tvDataTree = new System.Windows.Forms.TreeView();
             this.TreeImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableDataEdit = new System.Windows.Forms.TableLayoutPanel();
-            this.txtValue = new System.Windows.Forms.TextBox();
             this.tableDataEditTop = new System.Windows.Forms.TableLayoutPanel();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.cbbEncoding = new System.Windows.Forms.ComboBox();
+            this.btnShowWith = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
-            this.btnShowAllText = new System.Windows.Forms.Button();
+            this.cbbShowAs = new System.Windows.Forms.ComboBox();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.btnClearText = new System.Windows.Forms.Button();
+            this.btnPluginsManage = new System.Windows.Forms.Button();
             this.panel9 = new System.Windows.Forms.Panel();
-            this.btnExport = new System.Windows.Forms.Button();
+            this.btnExportFile = new System.Windows.Forms.Button();
+            this.pluginViewBox = new System.Windows.Forms.Panel();
             this.StatusBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
             this.splitMain.Panel1.SuspendLayout();
@@ -72,6 +73,7 @@
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panelTree.SuspendLayout();
             this.tableDataEdit.SuspendLayout();
             this.tableDataEditTop.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -136,7 +138,7 @@
             this.tableDataTree.ColumnCount = 1;
             this.tableDataTree.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableDataTree.Controls.Add(this.tableAddConnect, 0, 0);
-            this.tableDataTree.Controls.Add(this.tvDataTree, 0, 1);
+            this.tableDataTree.Controls.Add(this.panelTree, 0, 1);
             this.tableDataTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableDataTree.Location = new System.Drawing.Point(0, 0);
             this.tableDataTree.Name = "tableDataTree";
@@ -260,15 +262,27 @@
             this.btnAddConnect.UseVisualStyleBackColor = false;
             this.btnAddConnect.Click += new System.EventHandler(this.btnAddConnect_Click);
             // 
+            // panelTree
+            // 
+            this.panelTree.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelTree.Controls.Add(this.tvDataTree);
+            this.panelTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelTree.Location = new System.Drawing.Point(0, 40);
+            this.panelTree.Margin = new System.Windows.Forms.Padding(0);
+            this.panelTree.Name = "panelTree";
+            this.panelTree.Size = new System.Drawing.Size(506, 556);
+            this.panelTree.TabIndex = 1;
+            // 
             // tvDataTree
             // 
+            this.tvDataTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tvDataTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvDataTree.ImageIndex = 0;
             this.tvDataTree.ImageList = this.TreeImageList;
-            this.tvDataTree.Location = new System.Drawing.Point(3, 43);
+            this.tvDataTree.Location = new System.Drawing.Point(0, 0);
             this.tvDataTree.Name = "tvDataTree";
             this.tvDataTree.SelectedImageIndex = 0;
-            this.tvDataTree.Size = new System.Drawing.Size(500, 550);
+            this.tvDataTree.Size = new System.Drawing.Size(502, 552);
             this.tvDataTree.TabIndex = 1;
             this.tvDataTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvDataTree_NodeMouseClick);
             this.tvDataTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tvDataTree_KeyDown);
@@ -288,8 +302,8 @@
             this.tableDataEdit.BackColor = System.Drawing.Color.LightGray;
             this.tableDataEdit.ColumnCount = 1;
             this.tableDataEdit.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableDataEdit.Controls.Add(this.txtValue, 0, 1);
             this.tableDataEdit.Controls.Add(this.tableDataEditTop, 0, 0);
+            this.tableDataEdit.Controls.Add(this.pluginViewBox, 0, 1);
             this.tableDataEdit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableDataEdit.Location = new System.Drawing.Point(0, 0);
             this.tableDataEdit.Name = "tableDataEdit";
@@ -298,17 +312,6 @@
             this.tableDataEdit.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableDataEdit.Size = new System.Drawing.Size(613, 596);
             this.tableDataEdit.TabIndex = 0;
-            // 
-            // txtValue
-            // 
-            this.txtValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtValue.Location = new System.Drawing.Point(3, 43);
-            this.txtValue.Multiline = true;
-            this.txtValue.Name = "txtValue";
-            this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtValue.Size = new System.Drawing.Size(607, 550);
-            this.txtValue.TabIndex = 1;
-            this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             // 
             // tableDataEditTop
             // 
@@ -331,84 +334,97 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.cbbEncoding);
+            this.panel6.Controls.Add(this.btnShowWith);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(145, 28);
             this.panel6.TabIndex = 0;
             // 
-            // cbbEncoding
+            // btnShowWith
             // 
-            this.cbbEncoding.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbbEncoding.FormattingEnabled = true;
-            this.cbbEncoding.Location = new System.Drawing.Point(0, 0);
-            this.cbbEncoding.Name = "cbbEncoding";
-            this.cbbEncoding.Size = new System.Drawing.Size(145, 23);
-            this.cbbEncoding.TabIndex = 0;
-            this.cbbEncoding.SelectedIndexChanged += new System.EventHandler(this.cbbEncoding_SelectedIndexChanged);
+            this.btnShowWith.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnShowWith.Location = new System.Drawing.Point(0, 0);
+            this.btnShowWith.Name = "btnShowWith";
+            this.btnShowWith.Size = new System.Drawing.Size(145, 28);
+            this.btnShowWith.TabIndex = 0;
+            this.btnShowWith.Text = "Show with ...";
+            this.btnShowWith.UseVisualStyleBackColor = true;
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.btnShowAllText);
+            this.panel7.Controls.Add(this.cbbShowAs);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(154, 3);
+            this.panel7.Location = new System.Drawing.Point(154, 4);
+            this.panel7.Margin = new System.Windows.Forms.Padding(3, 4, 3, 2);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(145, 28);
             this.panel7.TabIndex = 1;
             // 
-            // btnShowAllText
+            // cbbShowAs
             // 
-            this.btnShowAllText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnShowAllText.Location = new System.Drawing.Point(0, 0);
-            this.btnShowAllText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnShowAllText.Name = "btnShowAllText";
-            this.btnShowAllText.Size = new System.Drawing.Size(145, 28);
-            this.btnShowAllText.TabIndex = 0;
-            this.btnShowAllText.Text = "Show all";
-            this.btnShowAllText.UseVisualStyleBackColor = true;
-            this.btnShowAllText.Click += new System.EventHandler(this.btnShowAllText_Click);
+            this.cbbShowAs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbbShowAs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbShowAs.Font = new System.Drawing.Font("SimSun", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbbShowAs.FormattingEnabled = true;
+            this.cbbShowAs.Items.AddRange(new object[] {
+            "Auto"});
+            this.cbbShowAs.Location = new System.Drawing.Point(0, 0);
+            this.cbbShowAs.Name = "cbbShowAs";
+            this.cbbShowAs.Size = new System.Drawing.Size(145, 26);
+            this.cbbShowAs.TabIndex = 2;
+            this.cbbShowAs.SelectedIndexChanged += new System.EventHandler(this.cbbShowAs_SelectedIndexChanged);
             // 
             // panel8
             // 
-            this.panel8.Controls.Add(this.btnClearText);
+            this.panel8.Controls.Add(this.btnPluginsManage);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(305, 3);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(145, 28);
             this.panel8.TabIndex = 2;
             // 
-            // btnClearText
+            // btnPluginsManage
             // 
-            this.btnClearText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearText.Location = new System.Drawing.Point(0, 0);
-            this.btnClearText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnClearText.Name = "btnClearText";
-            this.btnClearText.Size = new System.Drawing.Size(145, 28);
-            this.btnClearText.TabIndex = 0;
-            this.btnClearText.Text = "Clear";
-            this.btnClearText.UseVisualStyleBackColor = true;
-            this.btnClearText.Click += new System.EventHandler(this.btnClearText_Click);
+            this.btnPluginsManage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnPluginsManage.Location = new System.Drawing.Point(0, 0);
+            this.btnPluginsManage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPluginsManage.Name = "btnPluginsManage";
+            this.btnPluginsManage.Size = new System.Drawing.Size(145, 28);
+            this.btnPluginsManage.TabIndex = 1;
+            this.btnPluginsManage.Text = "Plugins manage";
+            this.btnPluginsManage.UseVisualStyleBackColor = true;
             // 
             // panel9
             // 
-            this.panel9.Controls.Add(this.btnExport);
+            this.panel9.Controls.Add(this.btnExportFile);
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(456, 3);
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(148, 28);
             this.panel9.TabIndex = 3;
             // 
-            // btnExport
+            // btnExportFile
             // 
-            this.btnExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnExport.Location = new System.Drawing.Point(0, 0);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(148, 28);
-            this.btnExport.TabIndex = 0;
-            this.btnExport.Text = "Export file";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            this.btnExportFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnExportFile.Location = new System.Drawing.Point(0, 0);
+            this.btnExportFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnExportFile.Name = "btnExportFile";
+            this.btnExportFile.Size = new System.Drawing.Size(148, 28);
+            this.btnExportFile.TabIndex = 1;
+            this.btnExportFile.Text = "Export file";
+            this.btnExportFile.UseVisualStyleBackColor = true;
+            this.btnExportFile.Click += new System.EventHandler(this.btnExportFile_Click);
+            // 
+            // pluginViewBox
+            // 
+            this.pluginViewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pluginViewBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pluginViewBox.Location = new System.Drawing.Point(0, 40);
+            this.pluginViewBox.Margin = new System.Windows.Forms.Padding(0);
+            this.pluginViewBox.Name = "pluginViewBox";
+            this.pluginViewBox.Size = new System.Drawing.Size(613, 556);
+            this.pluginViewBox.TabIndex = 1;
             // 
             // FormMain
             // 
@@ -439,8 +455,8 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.panel5.ResumeLayout(false);
+            this.panelTree.ResumeLayout(false);
             this.tableDataEdit.ResumeLayout(false);
-            this.tableDataEdit.PerformLayout();
             this.tableDataEditTop.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
@@ -471,18 +487,19 @@
         private System.Windows.Forms.TableLayoutPanel tableDataEdit;
         private System.Windows.Forms.TableLayoutPanel tableDataEditTop;
         private System.Windows.Forms.Panel panel6;
-        private System.Windows.Forms.ComboBox cbbEncoding;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.ToolStripStatusLabel labCurrentKey;
         private System.Windows.Forms.ToolStripStatusLabel labInfo;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
-        private System.Windows.Forms.Button btnExport;
-        private System.Windows.Forms.Button btnShowAllText;
-        private System.Windows.Forms.Button btnClearText;
-        private System.Windows.Forms.TextBox txtValue;
         private System.Windows.Forms.ImageList TreeImageList;
+        private System.Windows.Forms.Panel pluginViewBox;
+        private System.Windows.Forms.Button btnShowWith;
+        private System.Windows.Forms.Panel panelTree;
+        private System.Windows.Forms.Button btnPluginsManage;
+        private System.Windows.Forms.Button btnExportFile;
+        private System.Windows.Forms.ComboBox cbbShowAs;
     }
 }
 

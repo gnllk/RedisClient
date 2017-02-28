@@ -34,7 +34,7 @@ namespace Gnllk.RedisClient
             {
                 if (!this.Connection.Execute(new RedisCommand(Command.SET, Key, value)).Read<bool>(Readers.IsOK))
                 {
-                    throw new Exception(string.Format("Can not set {0} for value: {1} to redis", Key, value));
+                    throw new Exception(string.Format("Cannot set {0} for value: {1} to redis", Key, value));
                 }
             }
         }
