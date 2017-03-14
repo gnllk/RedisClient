@@ -44,7 +44,6 @@
     </WixExtension>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config.json" />
     <Content Include="License.rtf" />
     <Content Include="redis_client.ico" />
   </ItemGroup>

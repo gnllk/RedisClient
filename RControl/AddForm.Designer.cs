@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddForm));
             this.tableMain = new System.Windows.Forms.TableLayoutPanel();
             this.tableControl = new System.Windows.Forms.TableLayoutPanel();
             this.btnSave = new System.Windows.Forms.Button();
@@ -61,7 +62,7 @@
             this.tableMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 37F));
             this.tableMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 37F));
-            this.tableMain.Size = new System.Drawing.Size(1045, 510);
+            this.tableMain.Size = new System.Drawing.Size(782, 435);
             this.tableMain.TabIndex = 1;
             // 
             // tableControl
@@ -79,18 +80,18 @@
             this.tableControl.Controls.Add(this.pan_lab_db, 0, 0);
             this.tableControl.Controls.Add(this.cbb_db, 1, 0);
             this.tableControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableControl.Location = new System.Drawing.Point(4, 476);
+            this.tableControl.Location = new System.Drawing.Point(4, 401);
             this.tableControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableControl.Name = "tableControl";
             this.tableControl.RowCount = 1;
             this.tableControl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableControl.Size = new System.Drawing.Size(1037, 31);
+            this.tableControl.Size = new System.Drawing.Size(774, 31);
             this.tableControl.TabIndex = 0;
             // 
             // btnSave
             // 
             this.btnSave.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSave.Location = new System.Drawing.Point(775, 3);
+            this.btnSave.Location = new System.Drawing.Point(512, 3);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(125, 25);
@@ -102,7 +103,7 @@
             // btnCancel
             // 
             this.btnCancel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCancel.Location = new System.Drawing.Point(908, 3);
+            this.btnCancel.Location = new System.Drawing.Point(645, 3);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(125, 25);
@@ -114,7 +115,7 @@
             // btnImportFile
             // 
             this.btnImportFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnImportFile.Location = new System.Drawing.Point(641, 3);
+            this.btnImportFile.Location = new System.Drawing.Point(378, 3);
             this.btnImportFile.Name = "btnImportFile";
             this.btnImportFile.Size = new System.Drawing.Size(127, 25);
             this.btnImportFile.TabIndex = 2;
@@ -174,7 +175,7 @@
             this.panelName.Location = new System.Drawing.Point(4, 3);
             this.panelName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panelName.Name = "panelName";
-            this.panelName.Size = new System.Drawing.Size(1037, 31);
+            this.panelName.Size = new System.Drawing.Size(774, 31);
             this.panelName.TabIndex = 1;
             // 
             // txtName
@@ -182,7 +183,7 @@
             this.txtName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtName.Location = new System.Drawing.Point(0, 0);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(1037, 25);
+            this.txtName.Size = new System.Drawing.Size(774, 25);
             this.txtName.TabIndex = 0;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             this.txtName.Enter += new System.EventHandler(this.txtName_Enter);
@@ -196,7 +197,7 @@
             this.txtValue.Multiline = true;
             this.txtValue.Name = "txtValue";
             this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtValue.Size = new System.Drawing.Size(1037, 430);
+            this.txtValue.Size = new System.Drawing.Size(774, 355);
             this.txtValue.TabIndex = 2;
             this.txtValue.Enter += new System.EventHandler(this.txtValue_Enter);
             this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
@@ -206,10 +207,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1045, 510);
+            this.ClientSize = new System.Drawing.Size(782, 435);
             this.Controls.Add(this.tableMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddForm";
-            this.ShowIcon = false;
             this.Text = "Add";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AddForm_FormClosing);
             this.Load += new System.EventHandler(this.AddForm_Load);

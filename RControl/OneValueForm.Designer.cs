@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OneValueForm));
             this.txtValue = new System.Windows.Forms.TextBox();
             this.btnComfirm = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -61,11 +62,11 @@
             this.Controls.Add(this.btnComfirm);
             this.Controls.Add(this.txtValue);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OneValueForm";
-            this.ShowIcon = false;
             this.Text = "OneValueForm";
             this.Load += new System.EventHandler(this.OneValueForm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OneValueForm_KeyUp);

@@ -53,7 +53,7 @@
             this.tableDataEdit = new System.Windows.Forms.TableLayoutPanel();
             this.tableDataEditTop = new System.Windows.Forms.TableLayoutPanel();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.btnShowWith = new System.Windows.Forms.Button();
+            this.btnAboutMe = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.cbbShowAs = new System.Windows.Forms.ComboBox();
             this.panel8 = new System.Windows.Forms.Panel();
@@ -334,22 +334,23 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.btnShowWith);
+            this.panel6.Controls.Add(this.btnAboutMe);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(145, 28);
             this.panel6.TabIndex = 0;
             // 
-            // btnShowWith
+            // btnAboutMe
             // 
-            this.btnShowWith.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnShowWith.Location = new System.Drawing.Point(0, 0);
-            this.btnShowWith.Name = "btnShowWith";
-            this.btnShowWith.Size = new System.Drawing.Size(145, 28);
-            this.btnShowWith.TabIndex = 0;
-            this.btnShowWith.Text = "Show with ...";
-            this.btnShowWith.UseVisualStyleBackColor = true;
+            this.btnAboutMe.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnAboutMe.Location = new System.Drawing.Point(0, 0);
+            this.btnAboutMe.Name = "btnAboutMe";
+            this.btnAboutMe.Size = new System.Drawing.Size(145, 28);
+            this.btnAboutMe.TabIndex = 0;
+            this.btnAboutMe.Text = "About me";
+            this.btnAboutMe.UseVisualStyleBackColor = true;
+            this.btnAboutMe.Click += new System.EventHandler(this.btnAboutMe_Click);
             // 
             // panel7
             // 
@@ -394,6 +395,7 @@
             this.btnPluginsManage.TabIndex = 1;
             this.btnPluginsManage.Text = "Plugins manage";
             this.btnPluginsManage.UseVisualStyleBackColor = true;
+            this.btnPluginsManage.Click += new System.EventHandler(this.btnPluginsManage_Click);
             // 
             // panel9
             // 
@@ -495,7 +497,7 @@
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ImageList TreeImageList;
         private System.Windows.Forms.Panel pluginViewBox;
-        private System.Windows.Forms.Button btnShowWith;
+        private System.Windows.Forms.Button btnAboutMe;
         private System.Windows.Forms.Panel panelTree;
         private System.Windows.Forms.Button btnPluginsManage;
         private System.Windows.Forms.Button btnExportFile;

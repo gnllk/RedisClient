@@ -64,7 +64,6 @@
         <File Id="Gnllk.RControl.dll" Source="$(var.RedisClient.TargetDir)Gnllk.RControl.dll" />
         <File Id="Gnllk.JCommon.dll" Source="$(var.RedisClient.TargetDir)Gnllk.JCommon.dll" />
         <File Id="RClient.dll" Source="$(var.RedisClient.TargetDir)RClient.dll" />
-        <File Id="Config.json" Source="Config.json" />
         <File Id="RedisClient.exe" Source="$(var.RedisClient.TargetDir)RedisClient.exe" />
         <File Id="License.rtf" Source="License.rtf" />
         <File Id="redis_client.ico" Source="redis_client.ico" />

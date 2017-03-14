@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XmlForm));
             this.xmlBrowser = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
@@ -38,18 +39,18 @@
             this.xmlBrowser.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.xmlBrowser.MinimumSize = new System.Drawing.Size(27, 23);
             this.xmlBrowser.Name = "xmlBrowser";
-            this.xmlBrowser.Size = new System.Drawing.Size(1045, 510);
+            this.xmlBrowser.Size = new System.Drawing.Size(782, 435);
             this.xmlBrowser.TabIndex = 0;
             // 
             // XmlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1045, 510);
+            this.ClientSize = new System.Drawing.Size(782, 435);
             this.Controls.Add(this.xmlBrowser);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "XmlForm";
-            this.ShowIcon = false;
             this.Text = "Xml";
             this.Load += new System.EventHandler(this.XmlForm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.XmlForm_KeyUp);

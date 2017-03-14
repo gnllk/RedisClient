@@ -49,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutMeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutMeForm.Designer.cs">
+      <DependentUpon>AboutMeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="AddForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +86,12 @@
     <Compile Include="OneValueForm.Designer.cs">
       <DependentUpon>OneValueForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PluginsManageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginsManageForm.Designer.cs">
+      <DependentUpon>PluginsManageForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShowAsPluginControl.cs">
       <SubType>UserControl</SubType>
@@ -99,6 +111,15 @@
     <Compile Include="XmlForm.Designer.cs">
       <DependentUpon>XmlForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="XmlViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XmlViewer.Designer.cs">
+      <DependentUpon>XmlViewer.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AboutMeForm.resx">
+      <DependentUpon>AboutMeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddForm.resx">
       <DependentUpon>AddForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -113,6 +134,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OneValueForm.resx">
       <DependentUpon>OneValueForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PluginsManageForm.resx">
+      <DependentUpon>PluginsManageForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextForm));
             this.txtValue = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -39,7 +40,7 @@
             this.txtValue.Multiline = true;
             this.txtValue.Name = "txtValue";
             this.txtValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtValue.Size = new System.Drawing.Size(1045, 510);
+            this.txtValue.Size = new System.Drawing.Size(782, 435);
             this.txtValue.TabIndex = 0;
             this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
             // 
@@ -47,11 +48,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1045, 510);
+            this.ClientSize = new System.Drawing.Size(782, 435);
             this.Controls.Add(this.txtValue);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "TextForm";
-            this.ShowIcon = false;
             this.Text = "Text";
             this.Load += new System.EventHandler(this.TextForm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextForm_KeyUp);

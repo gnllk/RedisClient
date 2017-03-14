@@ -1,6 +1,6 @@
-﻿namespace ShowAsImagePlugin
+﻿namespace Gnllk.RControl
 {
-    partial class ShowAsImage
+    partial class XmlViewer
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,30 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.imgViewer = new Gnllk.RControl.ImageViewer();
-            this.SuspendLayout();
-            // 
-            // imgViewer
-            // 
-            this.imgViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imgViewer.Location = new System.Drawing.Point(0, 0);
-            this.imgViewer.Name = "imgViewer";
-            this.imgViewer.Size = new System.Drawing.Size(680, 400);
-            this.imgViewer.TabIndex = 0;
-            // 
-            // ShowAsImage
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.imgViewer);
-            this.Name = "ShowAsImage";
-            this.Size = new System.Drawing.Size(680, 400);
-            this.ResumeLayout(false);
-
         }
 
         #endregion
-
-        private Gnllk.RControl.ImageViewer imgViewer;
     }
 }

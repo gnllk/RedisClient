@@ -1,13 +1,13 @@
-﻿namespace ShowAsImagePlugin
+﻿namespace Gnllk.RControl
 {
-    partial class ShowAsImage
+    partial class PluginsManageForm
     {
-        /// <summary> 
+        /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
+        /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -20,38 +20,29 @@
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+        #region Windows Form Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            this.imgViewer = new Gnllk.RControl.ImageViewer();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginsManageForm));
             this.SuspendLayout();
             // 
-            // imgViewer
-            // 
-            this.imgViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imgViewer.Location = new System.Drawing.Point(0, 0);
-            this.imgViewer.Name = "imgViewer";
-            this.imgViewer.Size = new System.Drawing.Size(680, 400);
-            this.imgViewer.TabIndex = 0;
-            // 
-            // ShowAsImage
+            // PluginsManageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.imgViewer);
-            this.Name = "ShowAsImage";
-            this.Size = new System.Drawing.Size(680, 400);
+            this.ClientSize = new System.Drawing.Size(782, 435);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "PluginsManageForm";
+            this.Text = "Plugins Manager";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private Gnllk.RControl.ImageViewer imgViewer;
     }
 }

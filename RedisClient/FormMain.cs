@@ -1169,6 +1169,24 @@ namespace Gnllk.RedisClient
             }
         }
 
+        private void btnAboutMe_Click(object sender, EventArgs e)
+        {
+            SafetyCall(() =>
+            {
+                var form = new AboutMeForm();
+                form.Show();
+            });
+        }
+
+        private void btnPluginsManage_Click(object sender, EventArgs e)
+        {
+            SafetyCall(() =>
+            {
+                var form = new PluginsManageForm();
+                form.Show();
+            });
+        }
+
         #endregion UI Event
     }
 }

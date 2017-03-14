@@ -10,18 +10,9 @@ namespace ShowAsImagePlugin
     [Export(typeof(IShowAsPlugin))]
     public partial class ShowAsImage : UserControl, IShowAsPlugin
     {
-        private int _picX = 0;
-
-        private int _picY = 0;
-
-        private bool _mouseDragMove = false;
-
-        private const int MinRetain = 30;
-
         public ShowAsImage()
         {
             InitializeComponent();
-            picBox.MouseWheel += PicBox_MouseWheel;
         }
 
         private string OriginalKey { get; set; }
@@ -64,12 +55,45 @@ namespace ShowAsImagePlugin
 
         public virtual bool ShouldShowAs(string key, byte[] data)
         {
-            if (string.IsNullOrEmpty(key)) return false;
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                var isImg = key.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase);
 
-            return key.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
-                || key.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase)
-                || key.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                || key.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase);
+                if (isImg) return true;
+            }
+
+            if (data != null && data.Length > 9)
+            {
+                var isPng = data[0] == 0x89
+                && data[1] == 0x50
+                && data[2] == 0x4E
+                && data[3] == 0x47;
+
+                if (isPng) return true;
+
+                var isJpg = data[0] == 0xFF
+                && data[1] == 0xD8
+                && data[2] == 0xFF
+                && data[3] == 0xE0
+                && data[4] == 0x00
+                && data[5] == 0x10
+                && data[6] == 0x4A
+                && data[7] == 0x46
+                && data[8] == 0x49
+                && data[9] == 0x46;
+
+                if (isJpg) return true;
+
+                var isBmp = data[0] == 0x42
+                && data[1] == 0x4D;
+
+                if (isBmp) return true;
+            }
+
+            return false;
         }
 
         protected virtual void ShowValue(string key, byte[] data)
@@ -80,79 +104,15 @@ namespace ShowAsImagePlugin
 
                 using (var stream = new MemoryStream(data))
                 {
-                    var img = Image.FromStream(stream);
-                    picBox.Image = img;
-                    picBox.Width = img.Width;
-                    picBox.Height = img.Height;
-                    picBox.Top = (int)((Parent.Height - picBox.Height) / 2d);
-                    picBox.Left = (int)((Parent.Width - picBox.Width) / 2d);
+                    imgViewer.Image = Image.FromStream(stream);
+                    imgViewer.ShowImageInCenter();
                 }
             }
             catch (Exception ex)
             {
-                picBox.Image = null;
+                imgViewer.ClearImage();
                 MessageBox.Show(string.Format("May be not a image, {0}", ex.Message));
             }
-        }
-
-        private void picBox_MouseEnter(object sender, EventArgs e)
-        {
-            picBox.Focus();
-        }
-
-        private void PicBox_MouseWheel(object sender, MouseEventArgs e)
-        {
-            var oldWith = picBox.Width;
-            var oldHeight = picBox.Height;
-            if (e.Delta >= 0)
-            {
-                picBox.Width = (int)(picBox.Width * 1.1);
-                picBox.Height = (int)(picBox.Height * 1.1);
-                var leftDelta = (int)((oldWith - picBox.Width) / 2d);
-                var topDelta = (int)((oldHeight - picBox.Height) / 2d);
-                picBox.Left += leftDelta;
-                picBox.Top += topDelta;
-            }
-            else
-            {
-                picBox.Width = (int)(picBox.Width * 0.9);
-                picBox.Height = (int)(picBox.Height * 0.9);
-                var leftDelta = (int)((oldWith - picBox.Width) / 2d);
-                var topDelta = (int)((oldHeight - picBox.Height) / 2d);
-                picBox.Left += leftDelta;
-                picBox.Top += topDelta;
-            }
-        }
-
-        private void picBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_mouseDragMove)
-            {
-                var left = picBox.Left + (e.X - _picX);
-                var top = picBox.Top + (e.Y - _picY);
-                if (left > MinRetain - picBox.Width && left < Parent.Parent.Width - MinRetain)
-                    picBox.Left = left;
-                if (top > MinRetain - picBox.Height && top < Parent.Height - MinRetain)
-                    picBox.Top = top;
-            }
-        }
-
-        private void picBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            _mouseDragMove = true;
-            _picX = e.X;
-            _picY = e.Y;
-        }
-
-        private void picBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            _mouseDragMove = false;
-        }
-
-        private void ShowAsImage_Resize(object sender, EventArgs e)
-        {
-            picBox.Top = (int)((Parent.Height - picBox.Height) / 2d);
-            picBox.Left = (int)((Parent.Width - picBox.Width) / 2d);
         }
     }
 }
