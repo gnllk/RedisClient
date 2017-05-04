@@ -1,22 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace Gnllk.RControl
 {
     public partial class EditForm : Form
     {
-        byte[] mByteData = null;
+        public readonly string[] EncodingName = new string[] { "gb2312", "utf-16", "unicodeFFFE", "Windows-1252", "x-mac-korean", "x-mac-chinesesimp", "utf-32", "utf-32BE", "us-ascii", "x-cp20936", "x-cp20949", "iso-8859-1", "iso-8859-8", "iso-8859-8-i", "iso-2022-jp", "csISO2022JP", "iso-2022-kr", "x-cp50227", "euc-jp", "EUC-CN", "euc-kr", "hz-gb-2312", "GB18030", "x-iscii-de", "x-iscii-be", "x-iscii-ta", "x-iscii-te", "x-iscii-as", "x-iscii-or", "x-iscii-ka", "x-iscii-ma", "x-iscii-gu", "x-iscii-pa", "utf-7", "utf-8" };
+
+        public const string DefaultEncodingName = "utf-8";
+
+        public Encoding SelectedEncoding { get; protected set; } = Encoding.UTF8;
+
+        public byte[] FileData { get; protected set; }
+
+        protected byte[] OriginalValue { get; set; }
+
+        private bool _initialized = false;
 
         public EditForm()
         {
             InitializeComponent();
+            cbbEncoding.DataSource = EncodingName;
+            cbbEncoding.Text = DefaultEncodingName;
+            cbbEncoding.SelectedItem = DefaultEncodingName;
+            _initialized = true;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -35,15 +44,19 @@ namespace Gnllk.RControl
             set { labName.Text = value; }
         }
 
-        public string EditValue
+        public byte[] EditValue
         {
-            get { return txtValue.Text; }
-            set { txtValue.Text = value; }
+            get { return SelectedEncoding.GetBytes(txtValue.Text); }
+            set
+            {
+                OriginalValue = value;
+                txtValue.Text = SelectedEncoding.GetString(value);
+            }
         }
 
-        public byte[] ByteData
+        public string EditValueString
         {
-            get { return mByteData; }
+            get { return txtValue.Text; }
         }
 
         private void btnImportFile_Click(object sender, EventArgs e)
@@ -62,7 +75,9 @@ namespace Gnllk.RControl
                         txtValue.Text = string.Format("The content of file {0}", dialog.FileName);
                         using (BinaryReader reader = new BinaryReader(fs))
                         {
-                            mByteData = reader.ReadBytes((int)fs.Length);
+                            FileData = reader.ReadBytes((int)fs.Length);
+                            cbbEncoding.Enabled = false;
+                            txtValue.Enabled = false;
                         }
                     }
                 }
@@ -100,6 +115,22 @@ namespace Gnllk.RControl
         private void EditForm_Load(object sender, EventArgs e)
         {
             KeyPreview = true;
+        }
+
+        private void cbbEncoding_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!_initialized) return;
+                var encodingName = cbbEncoding.SelectedValue.ToString();
+                SelectedEncoding = Encoding.GetEncoding(encodingName);
+
+                txtValue.Text = SelectedEncoding.GetString(OriginalValue);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

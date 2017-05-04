@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
+using RClient.Properties;
 
 namespace RClient
 {
@@ -28,7 +29,10 @@ namespace RClient
             get { return mEncoding; }
             set
             {
-                if (value == null) throw new ArgumentNullException("Encoding");
+                if (value == null)
+                    throw new ArgumentNullException("Encoding",
+                        string.Format(Resources.NullExceptionFmt, "Encoding"));
+
                 mEncoding = value;
             }
         }

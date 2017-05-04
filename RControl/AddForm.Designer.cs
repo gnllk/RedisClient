@@ -211,6 +211,7 @@
             this.Controls.Add(this.tableMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddForm";
+            this.ShowInTaskbar = false;
             this.Text = "Add";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AddForm_FormClosing);
             this.Load += new System.EventHandler(this.AddForm_Load);

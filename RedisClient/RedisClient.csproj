@@ -52,13 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCache.cs" />
-    <Compile Include="ConnectionNode.cs" />
-    <Compile Include="DbNode.cs" />
+    <Compile Include="Node\ConnectionNode.cs" />
+    <Compile Include="Node\DbNode.cs" />
     <Compile Include="ImageIndex.cs" />
     <Compile Include="IRedisConnection.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ConnectionItem.cs" />
-    <Compile Include="DatabaseItem.cs" />
+    <Compile Include="Item\ConnectionItem.cs" />
+    <Compile Include="Item\DatabaseItem.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
@@ -66,14 +66,21 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="ItemBase.cs" />
-    <Compile Include="ItemType.cs" />
-    <Compile Include="KeyItem.cs" />
-    <Compile Include="KeyNode.cs" />
+    <Compile Include="Item\ItemBase.cs" />
+    <Compile Include="Item\ItemType.cs" />
+    <Compile Include="Item\KeyItem.cs" />
+    <Compile Include="Node\KeyNode.cs" />
     <Compile Include="Manager\ConfigManager.cs" />
     <Compile Include="Manager\ManagerBase.cs" />
+    <Compile Include="Manager\PluginFormManager.cs" />
     <Compile Include="Manager\PluginLoader.cs" />
-    <Compile Include="Manager\PluginManager.cs" />
+    <Compile Include="Manager\InstalledPluginManager.cs" />
+    <Compile Include="PluginGridViewItem.cs" />
+    <Compile Include="Plugin\IPluginItem.cs" />
+    <Compile Include="Plugin\PluginGridViewItem.cs" />
+    <Compile Include="Plugin\PluginInstallState.cs" />
+    <Compile Include="Plugin\PluginItem.cs" />
+    <Compile Include="Plugin\PluginJsonItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisConnection.cs" />
@@ -121,6 +128,9 @@
       <Project>{44A82DCE-35B3-4F49-895B-C8116D7915C9}</Project>
       <Name>RControl</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\redis_client_128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

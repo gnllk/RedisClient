@@ -27,8 +27,7 @@ namespace RClient
         public static byte[] ReadAsBytes(Socket socket)
         {
             byte[] result = null;
-            //using (MemoryStream ms = ReadToStream(socket))
-            using (MemoryStream ms = ReadToStreamAsyn(socket))
+            using (MemoryStream ms = ReadToStream(socket))
             {
                 result = ms.ToArray();
             }
@@ -44,12 +43,24 @@ namespace RClient
         {
             MemoryStream ms = new MemoryStream(2048);
             byte[] buffer = new byte[128];
-            int length = 0;
-            while ((length = socket.Receive(buffer, buffer.Length, SocketFlags.None)) > 0)
+            int receive = 0;
+            int tryCount = 3;
+
+            do
             {
-                ms.Write(buffer, 0, length);
-                if (length < buffer.Length) break;
+                tryCount = 3;
+                while (socket.Available < buffer.Length && tryCount-- > 0)
+                {
+                    Thread.Sleep(100);
+                }
+                receive = socket.Receive(buffer, buffer.Length, SocketFlags.None);
+                if (receive > 0)
+                {
+                    ms.Write(buffer, 0, receive);
+                }
             }
+            while (receive == buffer.Length);
+
             return ms;
         }
 
@@ -61,12 +72,17 @@ namespace RClient
         public static MemoryStream ReadToStreamAsyn(Socket socket)
         {
             DataFlow flow = new DataFlow(socket);
-            IAsyncResult asyncResult = socket.BeginReceive(flow.Buf, 0, flow.Buf.Length, SocketFlags.None, new AsyncCallback(AsyncRead), flow);
+            var buf = flow.Buf;
+            IAsyncResult asyncResult = socket.BeginReceive(buf, 0, buf.Length,
+                SocketFlags.None, new AsyncCallback(AsyncRead), flow);
             flow.AutoEvent.WaitOne();
             return flow.MStream;
         }
 
-        //Async read
+        /// <summary>
+        /// Async read data(danger: recursive call)
+        /// </summary>
+        /// <param name="result">Async result</param>
         protected static void AsyncRead(IAsyncResult result)
         {
             DataFlow flow = result.AsyncState as DataFlow;
@@ -75,12 +91,13 @@ namespace RClient
             int tryCount = 3;
             while (s.Available == 0 && tryCount-- > 0)
             {
-                System.Threading.Thread.Sleep(100);
+                Thread.Sleep(100);
             }
             if (bytesRead > 0 && s.Available > 0)
             {
                 flow.MStream.Write(flow.Buf, 0, bytesRead);
-                s.BeginReceive(flow.Buf, 0, flow.Buf.Length, SocketFlags.None, new AsyncCallback(AsyncRead), flow);
+                s.BeginReceive(flow.Buf, 0, flow.Buf.Length,
+                    SocketFlags.None, new AsyncCallback(AsyncRead), flow);
             }
             else
             {
@@ -118,6 +135,9 @@ namespace RClient
         }
     }
 
+    /// <summary>
+    /// Sokeck async read data flow
+    /// </summary>
     public class DataFlow
     {
         public Socket SocketRef { get; set; }

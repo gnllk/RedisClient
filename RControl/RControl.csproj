@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,7 +74,7 @@
     <Compile Include="ImageViewer.Designer.cs">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="IShowAsPlugin.cs" />
+    <Compile Include="IShowInPlugin.cs" />
     <Compile Include="ObjectViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -93,12 +94,6 @@
       <DependentUpon>PluginsManageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShowAsPluginControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ShowAsPluginControl.Designer.cs">
-      <DependentUpon>ShowAsPluginControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="TextForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,9 +143,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="ShowAsPluginControl.resx">
-      <DependentUpon>ShowAsPluginControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="TextForm.resx">
       <DependentUpon>TextForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -166,6 +158,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\redis_client_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RClient\RClient.csproj">
+      <Project>{c95f6755-ed70-405e-a5b9-4d87d46740fe}</Project>
+      <Name>RClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

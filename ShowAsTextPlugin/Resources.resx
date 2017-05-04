@@ -117,20 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Installed" xml:space="preserve">
-    <value>Installed</value>
-  </data>
-  <data name="Installing" xml:space="preserve">
-    <value>Installing</value>
-  </data>
-  <data name="NotInstall" xml:space="preserve">
-    <value>Not Install</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="redis_client" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\redis_client.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Removing" xml:space="preserve">
-    <value>Removing</value>
+  <data name="ShowAsText" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ShowAsText.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <?define var.Version = "1.0.0.3"?>
+  <?define var.Version = "1.0.0.5"?>
   <?define var.UpgradeCode = "04996b62-3500-4b6c-a5f7-1b3495f959c7"?>
-  <?define var.ProductID = "CEE27F9D-4330-4C92-8389-293FFC1CECD0"?>
 
-  <Product Id="$(var.ProductID)" Name="RedisClientSetup" Language="1033" Version="$(var.Version)" Manufacturer="Personal" UpgradeCode="$(var.UpgradeCode)">
+  <Product Id="*" Name="RedisClientSetup" Language="1033" Version="$(var.Version)" Manufacturer="Personal" UpgradeCode="$(var.UpgradeCode)">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MediaTemplate EmbedCab="yes" />
 
-    <MajorUpgrade
-      Schedule="afterInstallValidate"
-      AllowSameVersionUpgrades="no"
-      AllowDowngrades="no"
-      DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.Version)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
+      <UpgradeVersion OnlyDetect="no" Maximum="$(var.Version)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
+    </Upgrade>
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize" />
+    </InstallExecuteSequence>
 
     <Icon Id="icon.ico" SourceFile="redis_client.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />

@@ -1,19 +1,28 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Net;
+using RClient.Properties;
 
 namespace RClient
 {
     public class RedisConnection : IRedisConnection
     {
+        private const int WSAECONNRESET = 10054;
+
         private Socket mSocket = null;
 
         protected IPEndPoint mEndPoint = null;
 
         public RedisConnection(string ipString, int port)
         {
-            if (string.IsNullOrWhiteSpace(ipString)) throw new ArgumentNullException("ipString");
-            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort) throw new ArgumentOutOfRangeException("port");
+            if (string.IsNullOrWhiteSpace(ipString))
+                throw new ArgumentException(
+                    string.Format(Resources.NullOrEmptyExceptionFmt, "Internet address"), "ipString");
+
+            if (port <= IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+                throw new ArgumentOutOfRangeException("port",
+                    string.Format(Resources.PortOutOfRangeFmt, port));
+
             mEndPoint = (new IPEndPoint(IPAddress.Parse(ipString), port));
             mSocket = new Socket(mEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         }
@@ -25,13 +34,17 @@ namespace RClient
                 try
                 {
                     if (mSocket.Connected)
-                    {
                         Execute(new RedisCommand(Command.QUIT));
-                        mSocket.Shutdown(SocketShutdown.Both);
-                    }
+                }
+                catch (SocketException ex)
+                {
+                    // connection was forcibly closed by the remote host.
+                    if (WSAECONNRESET != ex.ErrorCode)
+                        throw ex;
                 }
                 finally
                 {
+                    mSocket.Shutdown(SocketShutdown.Both);
                     mSocket.Close();
                     mSocket = null;
                 }
@@ -46,14 +59,20 @@ namespace RClient
             Close();
         }
 
-        public IRedisReader Execute(IRedisCommand cmd)
+        public IRedisReader Execute(IRedisCommand command)
         {
-            if (cmd == null) throw new ArgumentNullException("cmd");
-            if (cmd.Command == Command.UNKNOWN) throw new ArgumentException("'UNKNOWN' command cannot execute", "cmd");
+            if (command == null)
+                throw new ArgumentNullException("command",
+                    string.Format(Resources.NullExceptionFmt, "Redis command"));
+            if (command.Command == Command.UNKNOWN)
+                throw new Exception(Resources.ExecuteErrorUnknowCommand);
+
             if (!mSocket.Connected) mSocket.Connect(mEndPoint);
-            byte[] data = cmd.ToBytes();
+            byte[] data = command.ToBytes();
             int sended = mSocket.Send(data);
-            if (sended != data.Length) throw new Exception("send fail");
+            if (sended != data.Length)
+                throw new Exception(Resources.ExecuteErrorSendDataFail);
+
             return new RedisReader(SocketHelper.ReadAsBytes(mSocket));
         }
 

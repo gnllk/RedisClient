@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Gnllk.RedisClient.Properties {
+namespace ShowAsImagePlugin {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Gnllk.RedisClient.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Gnllk.RedisClient.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ShowAsImagePlugin.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,48 +61,22 @@ namespace Gnllk.RedisClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installed.
-        /// </summary>
-        internal static string Installed {
-            get {
-                return ResourceManager.GetString("Installed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Installing.
-        /// </summary>
-        internal static string Installing {
-            get {
-                return ResourceManager.GetString("Installing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not Install.
-        /// </summary>
-        internal static string NotInstall {
-            get {
-                return ResourceManager.GetString("NotInstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon redis_client {
+        internal static System.Drawing.Icon ShowAsImage {
             get {
-                object obj = ResourceManager.GetObject("redis_client", resourceCulture);
+                object obj = ResourceManager.GetObject("ShowAsImage", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Removing.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string Removing {
+        internal static System.Drawing.Bitmap ShowAsImage_128 {
             get {
-                return ResourceManager.GetString("Removing", resourceCulture);
+                object obj = ResourceManager.GetObject("ShowAsImage_128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

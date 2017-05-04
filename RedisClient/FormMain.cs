@@ -10,6 +10,7 @@ using RClient;
 using Gnllk.RedisClient.Manager;
 using Gnllk.RControl;
 using Gnllk.JCommon.Helper;
+using Gnllk.RedisClient.Plugin;
 
 namespace Gnllk.RedisClient
 {
@@ -25,7 +26,7 @@ namespace Gnllk.RedisClient
 
         public const int MAX_STRING_LENGTH = 100;
 
-        public IPluginManager PluginsManager = PluginManager.Instance;
+        public IPluginManager PluginsManager = InstalledPluginManager.Instance;
 
         #endregion Properties
 
@@ -107,38 +108,39 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private void ShowAppCacheValue()
+        private void ShowAs(IKeyItem item)
         {
             try
             {
-                var data = AppCache.Instance.CurrentGetData;
-                var key = AppCache.Instance.CurrentKey;
-                if (string.IsNullOrWhiteSpace(key) || !PluginsManager.Plugins.Any()) return;
+                if (item == null || string.IsNullOrWhiteSpace(item.Key)) return;
+                if (!PluginsManager.Plugins.Any()) return;
 
-                Action<string, byte[]> set = (p1, p2) =>
+                var showData = ToShowData(item);
+
+                Action<ShowData> set = data =>
                 {
                     var showAsName = cbbShowAs.SelectedItem.ToString();
-                    var plugin = PluginsManager.DefaultPlugin;
+                    var pluginItem = PluginsManager.DefaultPlugin;
                     foreach (var p in PluginsManager.Plugins)
                     {
                         if (cbbShowAs.SelectedIndex == 0)
                         {
                             // Auto
-                            if (p.ShouldShowAs(key, data))
-                                plugin = p;
+                            if (p.Plugin.ShouldShowAs(data))
+                                pluginItem = p;
                         }
                         else
                         {
                             // Manual
-                            if (showAsName.Equals(p.GetName()))
-                                plugin = p;
+                            if (showAsName.Equals(p.Plugin.GetName()))
+                                pluginItem = p;
                         }
                     }
-                    if (plugin != null)
+                    if (pluginItem != null)
                     {
-                        if (plugin is Control)
+                        if (pluginItem.Plugin is Control)
                         {
-                            var newControl = (Control)plugin;
+                            var newControl = (Control)pluginItem.Plugin;
                             if (pluginViewBox.Controls.Count > 0)
                             {
                                 var oldControl = pluginViewBox.Controls[0];
@@ -146,7 +148,7 @@ namespace Gnllk.RedisClient
                                 {
                                     pluginViewBox.Controls.Clear();
                                     pluginViewBox.Controls.Add(newControl);
-                                    var oldPlugin = oldControl as IShowAsPlugin;
+                                    var oldPlugin = oldControl as IShowInPlugin;
                                     if (oldPlugin != null) SafetyCall(oldPlugin.OnBlur);
                                 }
                             }
@@ -155,18 +157,30 @@ namespace Gnllk.RedisClient
                                 pluginViewBox.Controls.Add(newControl);
                             }
                         }
-                        SafetyCall(() => { plugin.OnShowAs(p1, p2); });
+                        SafetyCall(() => { pluginItem.Plugin.OnShowAs(data); });
                     }
                 };
 
-                if (InvokeRequired) Invoke(set, key, data);
-                else set(key, data);
-
+                if (InvokeRequired) Invoke(set, showData);
+                else set(showData);
             }
             catch (Exception ex)
             {
                 Show(ex.Message);
             }
+        }
+
+        private static ShowData ToShowData(IKeyItem keyItem)
+        {
+            if (keyItem == null) return null;
+
+            return new ShowData()
+            {
+                Key = keyItem.Key,
+                Value = keyItem.Value,
+                DbName = keyItem.DbName,
+                EndPoint = keyItem.Connection.EndPoint.ToString()
+            };
         }
 
         private void SafetyCall(Action action)
@@ -257,7 +271,7 @@ namespace Gnllk.RedisClient
 
                 var info = cont.Execute(new RedisCommand(Command.INFO)).Read(InfoReader.ReadAsInfo);
                 var keys = info[KeyspaceSetion];
-                node.ChildData = keys;
+                node.DbNames = keys;
 
                 SetPrograss(50);
                 var count = keys?.Count ?? 0;
@@ -297,8 +311,8 @@ namespace Gnllk.RedisClient
                     SetPrograss(25);
                     var keys = item.Connection.Execute(new RedisCommand(Command.KEYS, "*")).Read(Readers.ReadAsList);
                     ShowStatusKey(item.DbName);
-                    node.ChildData = keys;
-                    node.ViewData = keys;
+                    node.Keys = keys;
+                    node.ViewKeys = keys;
                     SetPrograss(50);
                     AddKeysToTree(node, keys, 50);
                     NodeExpandOrNot(node, expand);
@@ -309,6 +323,32 @@ namespace Gnllk.RedisClient
                 }
             }
             catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
+        }
+
+        private void ShowValue(KeyNode node, bool expand = true)
+        {
+            if (!Check(node)) return;
+            var item = node.KeyItem;
+            try
+            {
+                item.Loading = true;
+                ShowStatusKey(item.Key);
+                SetPrograss(10);
+                var cont = item.Connection;
+                if (cont.Select(item.DbIndex))
+                {
+                    SetPrograss(50);
+                    AppCache.Instance.Item = item;
+                    ShowAs(item);
+                    SetPrograss(100);
+                }
+                else
+                {
+                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
+                }
+            }
+            catch (Exception ex) { ShowStatusInfo(ex.Message); }
             finally { item.Loading = false; }
         }
 
@@ -342,33 +382,6 @@ namespace Gnllk.RedisClient
             }
             ShowStatusInfo("read {0} keys", count);
             SetPrograss(100);
-        }
-
-        private void ShowValue(KeyNode node, bool expand = true)
-        {
-            if (!Check(node)) return;
-            var item = node.KeyItem;
-            try
-            {
-                item.Loading = true;
-                ShowStatusKey(item.Key);
-                SetPrograss(10);
-                var cont = item.Connection;
-                if (cont.Select(item.DbIndex))
-                {
-                    SetPrograss(50);
-                    AppCache.Instance.CurrentKey = item.Key;
-                    AppCache.Instance.CurrentGetData = cont.Execute(new RedisCommand(Command.GET, item.Key)).Read(Readers.ReadAsBytes);
-                    ShowAppCacheValue();
-                    SetPrograss(100);
-                }
-                else
-                {
-                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
-                }
-            }
-            catch (Exception ex) { ShowStatusInfo(ex.Message); }
-            finally { item.Loading = false; }
         }
 
         public ConnectionNode CreateConnectionNode(string connectionName, IRedisConnection redisConnection)
@@ -515,7 +528,7 @@ namespace Gnllk.RedisClient
                             if (item.Connection.Execute(new RedisCommand(Command.SET, name, val)).Read<bool>(Readers.IsOK))
                             {
                                 UpdateDbInfo(node);
-                                node.ChildData.Add(name);
+                                node.Keys.Add(name);
                                 AddNode(node, CreateKeyNode(name, item), true);
                             }
                             else
@@ -543,18 +556,18 @@ namespace Gnllk.RedisClient
                 using (var form = new EditForm()
                 {
                     EditName = item.Key,
-                    EditValue = item.GetValue(AppCache.Instance.CurrentEncoding)
+                    EditValue = item.Value
                 })
                 {
                     if (form.ShowDialog(this) == DialogResult.OK)
                     {
-                        if (form.ByteData != null)
+                        if (form.FileData != null)
                         {
-                            item.SetValue(form.ByteData);
+                            item.SetValue(form.FileData);
                         }
                         else
                         {
-                            item.SetValue(form.EditValue.Trim(), AppCache.Instance.CurrentEncoding);
+                            item.SetValue(form.EditValue);
                         }
                         ShowValue(node);
                     }
@@ -573,12 +586,12 @@ namespace Gnllk.RedisClient
             try
             {
                 item.Loading = true;
-                var keys = node.ViewData;
+                var keys = node.ViewKeys;
                 if (keys != null && keys.Any())
                 {
                     keys.Sort();
                     ClearChildNode(node);
-                    node.ViewData.Sort();
+                    node.ViewKeys.Sort();
                     AddKeysToTree(node, keys, 50);
                     NodeExpandOrNot(node, true);
                 }
@@ -613,14 +626,14 @@ namespace Gnllk.RedisClient
             try
             {
                 item.Loading = true;
-                var originalKeys = node.ChildData;
+                var originalKeys = node.Keys;
                 if (originalKeys == null || !originalKeys.Any()) return;
 
                 ClearChildNode(node);
                 var lowerCase = keyWord.ToLower();
-                node.ViewData = originalKeys.FindAll(_ => _.ToLower().Contains(lowerCase));
-                if (node.ViewData == null) return;
-                AddKeysToTree(node, node.ViewData, 0);
+                node.ViewKeys = originalKeys.FindAll(_ => _.ToLower().Contains(lowerCase));
+                if (node.ViewKeys == null) return;
+                AddKeysToTree(node, node.ViewKeys, 0);
                 NodeExpandOrNot(node, true);
             }
             catch (Exception ex) { Show(ex.Message); }
@@ -736,7 +749,7 @@ namespace Gnllk.RedisClient
                 if (item.Connection.Execute(new RedisCommand(Command.DEL, item.Key)).Read(Readers.ReadAsInt) > 0)
                 {
                     UpdateDbInfo(node.Parent as DbNode);
-                    (node.Parent as DbNode).ChildData.Remove(item.Key);
+                    (node.Parent as DbNode).Keys.Remove(item.Key);
                     RemoveNode(node);
                 }
                 else
@@ -866,12 +879,12 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private void PluginsManager_OnPluginsInitialized(ICollection<IShowAsPlugin> plugins)
+        private void PluginsManager_OnPluginsInitialized(ICollection<IPluginItem> plugins)
         {
             if (plugins == null || plugins.Count == 0) return;
-            foreach (var plugin in plugins)
+            foreach (var item in plugins)
             {
-                AddPluginNameToShowAsCombobox(plugin.GetName());
+                AddPluginNameToShowAsCombobox(item.Plugin.GetName());
             }
         }
 
@@ -1096,16 +1109,17 @@ namespace Gnllk.RedisClient
         {
             try
             {
-                var data = AppCache.Instance.CurrentGetData;
-                if (data == null && data.Length == 0)
+                if (AppCache.Instance.Item == null
+                    || AppCache.Instance.Item.Value == null
+                    || AppCache.Instance.Item.Value.Length == 0)
                 {
                     ShowStatusInfo("No data");
                     return;
                 }
-
+                var data = AppCache.Instance.Item.Value;
                 SaveFileDialog dialog = new SaveFileDialog();
                 dialog.Filter = "Text file (*.txt)|*.txt|Raw file (*.*)|*.*";
-                dialog.FileName = AppCache.Instance.CurrentKey ?? "Default1";
+                dialog.FileName = AppCache.Instance.Item.Key ?? "Default1";
                 string ext = Path.GetExtension(dialog.FileName).ToLower();
                 if (string.IsNullOrWhiteSpace(ext))
                 {
@@ -1161,7 +1175,10 @@ namespace Gnllk.RedisClient
         {
             try
             {
-                Task.Factory.StartNew(ShowAppCacheValue);
+                Task.Factory.StartNew(() =>
+                {
+                    ShowAs(AppCache.Instance.Item);
+                });
             }
             catch (Exception ex)
             {
@@ -1173,8 +1190,10 @@ namespace Gnllk.RedisClient
         {
             SafetyCall(() =>
             {
-                var form = new AboutMeForm();
-                form.Show();
+                using (var form = new AboutMeForm())
+                {
+                    form.ShowDialog();
+                }
             });
         }
 
@@ -1182,8 +1201,11 @@ namespace Gnllk.RedisClient
         {
             SafetyCall(() =>
             {
-                var form = new PluginsManageForm();
-                form.Show();
+                using (var form = new PluginsManageForm())
+                {
+                    PluginsManager.Initialize(form);
+                    form.ShowDialog();
+                }
             });
         }
 

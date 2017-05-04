@@ -67,6 +67,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OneValueForm";
+            this.ShowInTaskbar = false;
             this.Text = "OneValueForm";
             this.Load += new System.EventHandler(this.OneValueForm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OneValueForm_KeyUp);

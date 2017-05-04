@@ -2,6 +2,6 @@
 {
     public interface IRedisExecution
     {
-        IRedisReader Execute(IRedisCommand cmd);
+        IRedisReader Execute(IRedisCommand command);
     }
 }

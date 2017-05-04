@@ -34,6 +34,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnImportFile = new System.Windows.Forms.Button();
+            this.cbbEncoding = new System.Windows.Forms.ComboBox();
             this.panelName = new System.Windows.Forms.Panel();
             this.labName = new System.Windows.Forms.Label();
             this.txtValue = new System.Windows.Forms.TextBox();
@@ -63,14 +64,16 @@
             // 
             // tableControl
             // 
-            this.tableControl.ColumnCount = 4;
+            this.tableControl.ColumnCount = 5;
+            this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
-            this.tableControl.Controls.Add(this.btnSave, 2, 0);
-            this.tableControl.Controls.Add(this.btnCancel, 3, 0);
-            this.tableControl.Controls.Add(this.btnImportFile, 1, 0);
+            this.tableControl.Controls.Add(this.btnSave, 3, 0);
+            this.tableControl.Controls.Add(this.btnCancel, 4, 0);
+            this.tableControl.Controls.Add(this.btnImportFile, 2, 0);
+            this.tableControl.Controls.Add(this.cbbEncoding, 0, 0);
             this.tableControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableControl.Location = new System.Drawing.Point(4, 401);
             this.tableControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -115,6 +118,17 @@
             this.btnImportFile.UseVisualStyleBackColor = true;
             this.btnImportFile.Click += new System.EventHandler(this.btnImportFile_Click);
             // 
+            // cbbEncoding
+            // 
+            this.cbbEncoding.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbEncoding.FormattingEnabled = true;
+            this.cbbEncoding.Location = new System.Drawing.Point(3, 3);
+            this.cbbEncoding.Name = "cbbEncoding";
+            this.cbbEncoding.Size = new System.Drawing.Size(127, 23);
+            this.cbbEncoding.TabIndex = 4;
+            this.cbbEncoding.SelectedIndexChanged += new System.EventHandler(this.cbbEncoding_SelectedIndexChanged);
+            // 
             // panelName
             // 
             this.panelName.Controls.Add(this.labName);
@@ -156,6 +170,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "EditForm";
+            this.ShowInTaskbar = false;
             this.Text = "Edit";
             this.Load += new System.EventHandler(this.EditForm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.EditForm_KeyUp);
@@ -178,5 +193,6 @@
         private System.Windows.Forms.Label labName;
         private System.Windows.Forms.TextBox txtValue;
         private System.Windows.Forms.Button btnImportFile;
+        private System.Windows.Forms.ComboBox cbbEncoding;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RClient.Properties;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,7 +11,9 @@ namespace RClient
         {
             Info result = new Info();
             byte[] content = Readers.ReadAsBytes(data);
-            if (content == null) throw new Exception("Read large content fail, the result is null");
+            if (content == null)
+                throw new Exception(Resources.ReaderErrorLargeData);
+
             using (Stream stream = new MemoryStream(content))
             {
                 TextReader reader = new StreamReader(stream);

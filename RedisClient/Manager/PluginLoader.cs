@@ -11,9 +11,9 @@ namespace Gnllk.RedisClient.Manager
     internal sealed class PluginLoader : ManagerBase<PluginLoader>
     {
         [ImportMany]
-        private IEnumerable<IShowAsPlugin> _plugins;
+        private IEnumerable<IShowInPlugin> _plugins;
 
-        public ICollection<IShowAsPlugin> LoadPlugins()
+        public ICollection<IShowInPlugin> LoadPlugins()
         {
             var catalog = new AggregateCatalog();
             var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
@@ -31,7 +31,7 @@ namespace Gnllk.RedisClient.Manager
             }
             catch
             {
-                return new List<IShowAsPlugin>();
+                return new List<IShowInPlugin>();
             }
         }
     }

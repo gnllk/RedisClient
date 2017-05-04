@@ -32,13 +32,13 @@
             this.txtValue = new System.Windows.Forms.TextBox();
             this.tableToolBar = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnClearText = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.btnSaveFile = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.btnShowAllText = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbbEncoding = new System.Windows.Forms.ComboBox();
+            this.cbbShowAs = new System.Windows.Forms.ComboBox();
             this.tableMain.SuspendLayout();
             this.tableToolBar.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -73,6 +73,7 @@
             this.txtValue.Size = new System.Drawing.Size(680, 360);
             this.txtValue.TabIndex = 0;
             this.txtValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtValue_KeyDown);
+            this.txtValue.MouseEnter += new System.EventHandler(this.txtValue_MouseEnter);
             // 
             // tableToolBar
             // 
@@ -95,24 +96,12 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.btnClearText);
+            this.panel2.Controls.Add(this.cbbShowAs);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(171, 3);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(162, 28);
             this.panel2.TabIndex = 4;
-            // 
-            // btnClearText
-            // 
-            this.btnClearText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearText.Location = new System.Drawing.Point(0, 0);
-            this.btnClearText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnClearText.Name = "btnClearText";
-            this.btnClearText.Size = new System.Drawing.Size(162, 28);
-            this.btnClearText.TabIndex = 1;
-            this.btnClearText.Text = "Clear";
-            this.btnClearText.UseVisualStyleBackColor = true;
-            this.btnClearText.Click += new System.EventHandler(this.btnClearText_Click);
             // 
             // panel8
             // 
@@ -169,6 +158,7 @@
             // cbbEncoding
             // 
             this.cbbEncoding.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbbEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbbEncoding.Font = new System.Drawing.Font("SimSun", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbbEncoding.FormattingEnabled = true;
             this.cbbEncoding.Location = new System.Drawing.Point(0, 0);
@@ -176,6 +166,21 @@
             this.cbbEncoding.Size = new System.Drawing.Size(162, 26);
             this.cbbEncoding.TabIndex = 1;
             this.cbbEncoding.SelectedIndexChanged += new System.EventHandler(this.cbbEncoding_SelectedIndexChanged);
+            // 
+            // cbbShowAs
+            // 
+            this.cbbShowAs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbbShowAs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbbShowAs.Font = new System.Drawing.Font("SimSun", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbbShowAs.FormattingEnabled = true;
+            this.cbbShowAs.Items.AddRange(new object[] {
+            "TXT",
+            "XML"});
+            this.cbbShowAs.Location = new System.Drawing.Point(0, 0);
+            this.cbbShowAs.Name = "cbbShowAs";
+            this.cbbShowAs.Size = new System.Drawing.Size(162, 26);
+            this.cbbShowAs.TabIndex = 2;
+            this.cbbShowAs.SelectedIndexChanged += new System.EventHandler(this.cbbShowAs_SelectedIndexChanged);
             // 
             // ShowAsText
             // 
@@ -207,6 +212,6 @@
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Button btnSaveFile;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button btnClearText;
+        private System.Windows.Forms.ComboBox cbbShowAs;
     }
 }

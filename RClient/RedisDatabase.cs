@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RClient.Properties;
+using System;
 using System.Linq;
 using System.Net;
 
@@ -15,9 +16,13 @@ namespace RClient
 
         protected static string ResolveIPAddress(string hostOrIP, bool useIPv4 = true)
         {
-            if (string.IsNullOrWhiteSpace(hostOrIP)) throw new ArgumentException("argument cannot be null or empty", "hostOrIP");
+            if (string.IsNullOrWhiteSpace(hostOrIP))
+                throw new ArgumentException(string.Format(Resources.NullOrEmptyExceptionFmt, "hostOrIP"));
+
             IPHostEntry entry = useIPv4 ? Dns.Resolve(hostOrIP) : Dns.GetHostEntry(hostOrIP);
-            if (entry.AddressList == null || !entry.AddressList.Any()) throw new Exception(string.Format("DNS cannot resolve: {0}", hostOrIP));
+            if (entry.AddressList == null || !entry.AddressList.Any())
+                throw new Exception(string.Format(Resources.DNSResolveErrorFmt, hostOrIP));
+
             return entry.AddressList[0].ToString();
         }
 
@@ -26,7 +31,7 @@ namespace RClient
         {
             if (dbIndex > 0 && !Select(dbIndex))
             {
-                throw new Exception(string.Format("cannot select db: {0}", dbIndex));
+                throw new Exception(string.Format(Resources.RedisSelectErrorFmt, dbIndex));
             }
         }
 

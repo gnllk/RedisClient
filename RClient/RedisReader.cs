@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RClient.Properties;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace RClient
             get { return mInData; }
             set
             {
-                if (value == null) throw new ArgumentNullException();
+                if (value == null) throw new Exception(string.Format(Resources.PropertySetNullErrorFmt, "InData"));
                 mInData = value;
             }
         }
@@ -57,7 +58,7 @@ namespace RClient
             get { return mGlobalEncoding; }
             set
             {
-                if (value == null) throw new ArgumentNullException();
+                if (value == null) throw new Exception(string.Format(Resources.PropertySetNullErrorFmt, "GlobalEncoding"));
                 mGlobalEncoding = value;
             }
         }

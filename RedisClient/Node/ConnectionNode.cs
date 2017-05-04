@@ -7,7 +7,7 @@ namespace Gnllk.RedisClient
     {
         public IConnectionItem ConnectionItem { get; set; }
 
-        public Section ChildData { get; set; }
+        public Section DbNames { get; set; }
 
         public ConnectionNode() { }
 

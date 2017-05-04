@@ -7,9 +7,9 @@ namespace Gnllk.RedisClient
     {
         public IDatabaseItem DatabaseItem { get; set; }
 
-        public List<string> ChildData { get; set; }
+        public List<string> Keys { get; set; }
 
-        public List<string> ViewData { get; set; }
+        public List<string> ViewKeys { get; set; }
 
         public DbNode() { }
 

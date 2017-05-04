@@ -117,20 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Installed" xml:space="preserve">
-    <value>Installed</value>
+  <data name="DNSResolveErrorFmt" xml:space="preserve">
+    <value>DNS cannot resolve {0}</value>
+    <comment>string format with one argument</comment>
   </data>
-  <data name="Installing" xml:space="preserve">
-    <value>Installing</value>
+  <data name="ExecuteErrorSendDataFail" xml:space="preserve">
+    <value>Send data to server fail.</value>
+    <comment>a string</comment>
   </data>
-  <data name="NotInstall" xml:space="preserve">
-    <value>Not Install</value>
+  <data name="ExecuteErrorUnknowCommand" xml:space="preserve">
+    <value>'UNKNOWN' command could not be executed..</value>
+    <comment>a string</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="redis_client" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\redis_client.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="NullExceptionFmt" xml:space="preserve">
+    <value>{0} could not be null.</value>
+    <comment>string format with one argument</comment>
   </data>
-  <data name="Removing" xml:space="preserve">
-    <value>Removing</value>
+  <data name="NullOrEmptyExceptionFmt" xml:space="preserve">
+    <value>{0} could not be null or empty.</value>
+    <comment>string format with one argument</comment>
+  </data>
+  <data name="PortOutOfRangeFmt" xml:space="preserve">
+    <value>The port {0} out of the range (0, 65535)</value>
+    <comment>string format with one argument</comment>
+  </data>
+  <data name="PropertySetNullErrorFmt" xml:space="preserve">
+    <value>The {0} property could not be set to null.</value>
+    <comment>string format with one argument</comment>
+  </data>
+  <data name="ReaderErrorLargeData" xml:space="preserve">
+    <value>Read large content fail, the result is null.</value>
+    <comment>a string</comment>
+  </data>
+  <data name="RedisSelectErrorFmt" xml:space="preserve">
+    <value>Could not select db: {0}</value>
+    <comment>string format with one argument</comment>
   </data>
 </root>

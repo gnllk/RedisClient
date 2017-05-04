@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Gnllk.RedisClient.Properties {
+namespace RClient.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Gnllk.RedisClient.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Gnllk.RedisClient.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RClient.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,48 +61,83 @@ namespace Gnllk.RedisClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installed.
+        ///   Looks up a localized string similar to DNS cannot resolve {0}.
         /// </summary>
-        internal static string Installed {
+        internal static string DNSResolveErrorFmt {
             get {
-                return ResourceManager.GetString("Installed", resourceCulture);
+                return ResourceManager.GetString("DNSResolveErrorFmt", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installing.
+        ///   Looks up a localized string similar to Send data to server fail..
         /// </summary>
-        internal static string Installing {
+        internal static string ExecuteErrorSendDataFail {
             get {
-                return ResourceManager.GetString("Installing", resourceCulture);
+                return ResourceManager.GetString("ExecuteErrorSendDataFail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not Install.
+        ///   Looks up a localized string similar to &apos;UNKNOWN&apos; command could not be executed...
         /// </summary>
-        internal static string NotInstall {
+        internal static string ExecuteErrorUnknowCommand {
             get {
-                return ResourceManager.GetString("NotInstall", resourceCulture);
+                return ResourceManager.GetString("ExecuteErrorUnknowCommand", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        ///   Looks up a localized string similar to {0} could not be null..
         /// </summary>
-        internal static System.Drawing.Icon redis_client {
+        internal static string NullExceptionFmt {
             get {
-                object obj = ResourceManager.GetObject("redis_client", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                return ResourceManager.GetString("NullExceptionFmt", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Removing.
+        ///   Looks up a localized string similar to {0} could not be null or empty..
         /// </summary>
-        internal static string Removing {
+        internal static string NullOrEmptyExceptionFmt {
             get {
-                return ResourceManager.GetString("Removing", resourceCulture);
+                return ResourceManager.GetString("NullOrEmptyExceptionFmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The port {0} out of the range (0, 65535).
+        /// </summary>
+        internal static string PortOutOfRangeFmt {
+            get {
+                return ResourceManager.GetString("PortOutOfRangeFmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} property could not be set to null..
+        /// </summary>
+        internal static string PropertySetNullErrorFmt {
+            get {
+                return ResourceManager.GetString("PropertySetNullErrorFmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read large content fail, the result is null..
+        /// </summary>
+        internal static string ReaderErrorLargeData {
+            get {
+                return ResourceManager.GetString("ReaderErrorLargeData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not select db: {0}.
+        /// </summary>
+        internal static string RedisSelectErrorFmt {
+            get {
+                return ResourceManager.GetString("RedisSelectErrorFmt", resourceCulture);
             }
         }
     }

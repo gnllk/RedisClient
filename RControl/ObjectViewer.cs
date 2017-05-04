@@ -340,11 +340,11 @@ namespace Gnllk.RControl
             if (node == null || node.Tag == null && node.Parent == null) return;
             NodeItem item = node.Tag as NodeItem;
 
-            using (var form = new EditForm() { EditName = item.Name, EditValue = item.Value })
+            using (var form = new EditForm() { EditName = item.Name, EditValue = Encoding.UTF8.GetBytes(item.Value) })
             {
                 if (form.ShowDialog(this) == DialogResult.OK)
                 {
-                    item.Value = form.EditValue.Trim();
+                    item.Value = form.SelectedEncoding.GetString(form.EditValue);
                 }
             }
         }

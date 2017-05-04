@@ -7,17 +7,22 @@ using System.IO;
 
 namespace ShowAsImagePlugin
 {
-    [Export(typeof(IShowAsPlugin))]
-    public partial class ShowAsImage : UserControl, IShowAsPlugin
+    [Export(typeof(IShowInPlugin))]
+    public partial class ShowAsImage : UserControl, IShowInPlugin
     {
+        private static readonly Guid PluginId = new Guid("03bb1b0e-ee3c-46b5-88db-4253c089741e");
+
         public ShowAsImage()
         {
             InitializeComponent();
         }
 
-        private string OriginalKey { get; set; }
+        protected ShowData Data { get; set; }
 
-        private byte[] OriginalValue { get; set; }
+        public string GetAuthor()
+        {
+            return "www.gnllk.com";
+        }
 
         public virtual string GetConfig()
         {
@@ -27,6 +32,16 @@ namespace ShowAsImagePlugin
         public virtual string GetDescription()
         {
             return "Support jpg, png, bmp";
+        }
+
+        public Icon GetIcon()
+        {
+            return Resources.ShowAsImage;
+        }
+
+        public Guid GetId()
+        {
+            return PluginId;
         }
 
         public virtual string GetName()
@@ -46,15 +61,29 @@ namespace ShowAsImagePlugin
         {
         }
 
-        public virtual void OnShowAs(string key, byte[] data)
+        public virtual void OnShowAs(ShowData data)
         {
-            OriginalKey = key;
-            OriginalValue = data;
-            ShowValue(OriginalKey, OriginalValue);
+            Data = data;
+            ShowValue(Data.Key, Data.Value);
         }
 
-        public virtual bool ShouldShowAs(string key, byte[] data)
+        public void OnShowConnection(ConnectionData data)
         {
+            throw new NotImplementedException();
+        }
+
+        public void OnShowDatabase(DatabaseData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual bool ShouldShowAs(ShowData data)
+        {
+            if (data == null) return false;
+
+            var key = data.Key;
+            var val = data.Value;
+
             if (string.IsNullOrWhiteSpace(key))
             {
                 var isImg = key.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
@@ -65,34 +94,40 @@ namespace ShowAsImagePlugin
                 if (isImg) return true;
             }
 
-            if (data != null && data.Length > 9)
+            if (val != null && val.Length > 9)
             {
-                var isPng = data[0] == 0x89
-                && data[1] == 0x50
-                && data[2] == 0x4E
-                && data[3] == 0x47;
+                var isPng = val[0] == 0x89
+                && val[1] == 0x50
+                && val[2] == 0x4E
+                && val[3] == 0x47;
 
                 if (isPng) return true;
 
-                var isJpg = data[0] == 0xFF
-                && data[1] == 0xD8
-                && data[2] == 0xFF
-                && data[3] == 0xE0
-                && data[4] == 0x00
-                && data[5] == 0x10
-                && data[6] == 0x4A
-                && data[7] == 0x46
-                && data[8] == 0x49
-                && data[9] == 0x46;
+                var isJpg = val[0] == 0xFF
+                && val[1] == 0xD8
+                && val[2] == 0xFF
+                && val[3] == 0xE0
+                && val[4] == 0x00
+                && val[5] == 0x10;
 
                 if (isJpg) return true;
 
-                var isBmp = data[0] == 0x42
-                && data[1] == 0x4D;
+                var isBmp = val[0] == 0x42
+                && val[1] == 0x4D;
 
                 if (isBmp) return true;
             }
 
+            return false;
+        }
+
+        public virtual bool ShouldShowConnection(ConnectionData data)
+        {
+            return false;
+        }
+
+        public virtual bool ShouldShowDatabase(DatabaseData data)
+        {
             return false;
         }
 
