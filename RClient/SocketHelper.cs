@@ -44,20 +44,17 @@ namespace RClient
             MemoryStream ms = new MemoryStream(2048);
             byte[] buffer = new byte[128];
             int receive = 0;
-            int tryCount = 3;
+            int tryTime = 3;
 
             do
             {
-                tryCount = 3;
-                while (socket.Available < buffer.Length && tryCount-- > 0)
-                {
-                    Thread.Sleep(100);
-                }
+                tryTime = 3;
+                while (socket.Available < buffer.Length && tryTime-- > 0) Thread.Sleep(100);
+
+                if (socket.Available == 0) break;
+
                 receive = socket.Receive(buffer, buffer.Length, SocketFlags.None);
-                if (receive > 0)
-                {
-                    ms.Write(buffer, 0, receive);
-                }
+                if (receive > 0) ms.Write(buffer, 0, receive);
             }
             while (receive == buffer.Length);
 
