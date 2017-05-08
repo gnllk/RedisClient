@@ -99,10 +99,7 @@ namespace Gnllk.RedisClient
 
         #endregion constructor
 
-        /// <summary>
-        /// free connection
-        /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (_Client != null)
             {
@@ -111,12 +108,7 @@ namespace Gnllk.RedisClient
             }
         }
 
-        /// <summary>
-        /// select redis database
-        /// </summary>
-        /// <param name="dbIndex">database index</param>
-        /// <returns>true if success</returns>
-        public bool Select(int dbIndex)
+        public virtual bool Select(int dbIndex)
         {
             if (dbIndex != CurrentIndex)
             {
@@ -133,17 +125,24 @@ namespace Gnllk.RedisClient
             return true;
         }
 
-        /// <summary>
-        /// execute redis command
-        /// </summary>
-        /// <param name="cmd">command</param>
-        /// <returns>data reader</returns>
-        public IRedisReader Execute(IRedisCommand cmd)
+        public virtual IRedisReader Execute(IRedisCommand cmd)
         {
             lock (LockThis)
             {
                 return Client.Execute(cmd);
             }
+        }
+
+        public virtual IRedisConnection Copy()
+        {
+            var newConnection = new RedisConnection()
+            {
+                CurrentIndex = CurrentIndex,
+                Description = Description,
+                EndPoint = EndPoint,
+                Password = Password
+            };
+            return newConnection;
         }
 
         protected virtual string Encript(string str)
@@ -156,6 +155,13 @@ namespace Gnllk.RedisClient
         {
             if (string.IsNullOrEmpty(str)) return string.Empty;
             return PasswordHelper.Decript(str);
+        }
+
+        public bool Login()
+        {
+            if (string.IsNullOrWhiteSpace(Password)) return false;
+
+            return Client.Execute(new RedisCommand(Command.AUTH, Password)).Read(Readers.IsOK);
         }
     }
 }

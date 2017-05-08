@@ -281,7 +281,11 @@ namespace Gnllk.RedisClient
                     double step = prograss / count;
                     foreach (var db in keys)
                     {
-                        AddNode(node, CreateDbNode(db.Key, db.Value, item));
+                        var newConnectionItem = new ConnectionItem(item.Connection.Copy(), item.ConnectionName);
+                        //TODO: remove to db click event
+                        newConnectionItem.Connection.Login();
+                        AppCache.Instance.DbConnections.Add(newConnectionItem.Connection);
+                        AddNode(node, CreateDbNode(db.Key, db.Value, newConnectionItem));
                         SetPrograss((int)(prograss += step));
                     }
                     NodeExpandOrNot(node, expand);
@@ -1168,6 +1172,16 @@ namespace Gnllk.RedisClient
             catch (Exception ex)
             {
                 Show("free connection error: {0}", ex.Message);
+            }
+            try
+            {
+                ShowStatusInfo("freeing db connection...");
+                AppCache.Instance.DbConnections.ForEach(item => item.Dispose());
+                AppCache.Instance.DbConnections.Clear();
+            }
+            catch (Exception ex)
+            {
+                Show("free db connection error: {0}", ex.Message);
             }
         }
 

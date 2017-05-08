@@ -14,5 +14,9 @@ namespace Gnllk.RedisClient
         int CurrentIndex { get; }
 
         bool Select(int dbIndex);
+
+        IRedisConnection Copy();
+
+        bool Login();
     }
 }
