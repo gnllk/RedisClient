@@ -44,7 +44,8 @@ namespace RClient
                 }
                 finally
                 {
-                    mSocket.Shutdown(SocketShutdown.Both);
+                    if (mSocket.Connected)
+                        mSocket.Shutdown(SocketShutdown.Both);
                     mSocket.Close();
                     mSocket = null;
                 }
