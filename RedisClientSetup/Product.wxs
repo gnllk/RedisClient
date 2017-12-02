@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <?define var.Version = "1.0.0.5"?>
+  <?define var.Version = "1.0.0.6"?>
   <?define var.UpgradeCode = "04996b62-3500-4b6c-a5f7-1b3495f959c7"?>
 
   <Product Id="*" Name="RedisClientSetup" Language="1033" Version="$(var.Version)" Manufacturer="Personal" UpgradeCode="$(var.UpgradeCode)">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MediaTemplate EmbedCab="yes" />
 
-    <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion OnlyDetect="yes" Minimum="$(var.Version)" Property="NEWERVERSIONDETECTED" IncludeMinimum="no" />
-      <UpgradeVersion OnlyDetect="no" Maximum="$(var.Version)" Property="OLDERVERSIONBEINGUPGRADED" IncludeMaximum="no" />
-    </Upgrade>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 
     <InstallExecuteSequence>
       <RemoveExistingProducts After="InstallInitialize" />

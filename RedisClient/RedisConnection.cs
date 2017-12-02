@@ -9,15 +9,15 @@ namespace Gnllk.RedisClient
     [DataContract]
     public class RedisConnection : IRedisConnection
     {
-        private object mLockThis = new object();
+        private object _executeLock = new object();
 
-        private object LockThis
+        protected object ExecuteLock
         {
             get
             {
-                if (mLockThis == null)
-                    mLockThis = new object();
-                return mLockThis;
+                if (_executeLock == null)
+                    _executeLock = new object();
+                return _executeLock;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Gnllk.RedisClient
             {
                 if (_Client == null || !_Client.Connected)
                 {
-                    lock (LockThis)
+                    lock (ExecuteLock)
                     {
                         if (_Client == null || !_Client.Connected)
                         {
@@ -112,13 +112,13 @@ namespace Gnllk.RedisClient
         {
             if (dbIndex != CurrentIndex)
             {
-                lock (LockThis)
+                lock (ExecuteLock)
                 {
                     if (dbIndex != CurrentIndex)
                     {
-                        bool ret = Client.Select(dbIndex);
-                        if (ret) CurrentIndex = dbIndex;
-                        return ret;
+                        bool result = Client.Select(dbIndex);
+                        if (result) CurrentIndex = dbIndex;
+                        return result;
                     }
                 }
             }
@@ -127,7 +127,7 @@ namespace Gnllk.RedisClient
 
         public virtual IRedisReader Execute(IRedisCommand cmd)
         {
-            lock (LockThis)
+            lock (ExecuteLock)
             {
                 return Client.Execute(cmd);
             }
@@ -145,6 +145,13 @@ namespace Gnllk.RedisClient
             return newConnection;
         }
 
+        public bool Login()
+        {
+            if (string.IsNullOrWhiteSpace(Password)) return false;
+
+            return Client.Execute(new RedisCommand(Command.AUTH, Password)).Read(Readers.IsOK);
+        }
+
         protected virtual string Encript(string str)
         {
             if (string.IsNullOrEmpty(str)) return string.Empty;
@@ -155,13 +162,6 @@ namespace Gnllk.RedisClient
         {
             if (string.IsNullOrEmpty(str)) return string.Empty;
             return PasswordHelper.Decript(str);
-        }
-
-        public bool Login()
-        {
-            if (string.IsNullOrWhiteSpace(Password)) return false;
-
-            return Client.Execute(new RedisCommand(Command.AUTH, Password)).Read(Readers.IsOK);
         }
     }
 }

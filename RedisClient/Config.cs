@@ -42,5 +42,8 @@ namespace Gnllk.RedisClient
                 mPluginsConfigString = value;
             }
         }
+
+        [DataMember]
+        public string GlobalTextEncoding { get; set; } = "utf-8";
     }
 }

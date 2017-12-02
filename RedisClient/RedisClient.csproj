@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCache.cs" />
+    <Compile Include="ClipboardKeyValue.cs" />
     <Compile Include="Node\ConnectionNode.cs" />
     <Compile Include="Node\DbNode.cs" />
     <Compile Include="ImageIndex.cs" />

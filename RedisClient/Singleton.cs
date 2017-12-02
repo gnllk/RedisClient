@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Gnllk.RedisClient
+﻿namespace Gnllk.RedisClient
 {
     public abstract class Singleton<T> where T : new()
     {

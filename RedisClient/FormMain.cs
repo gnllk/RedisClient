@@ -26,6 +26,8 @@ namespace Gnllk.RedisClient
 
         public const int MAX_STRING_LENGTH = 100;
 
+        public const int AutoDetected = 0;
+
         public IPluginManager PluginsManager = InstalledPluginManager.Instance;
 
         #endregion Properties
@@ -115,54 +117,10 @@ namespace Gnllk.RedisClient
                 if (item == null || string.IsNullOrWhiteSpace(item.Key)) return;
                 if (!PluginsManager.Plugins.Any()) return;
 
-                var showData = ToShowData(item);
+                var showData = ConvertToShowData(item);
 
-                Action<ShowData> set = data =>
-                {
-                    var showAsName = cbbShowAs.SelectedItem.ToString();
-                    var pluginItem = PluginsManager.DefaultPlugin;
-                    foreach (var p in PluginsManager.Plugins)
-                    {
-                        if (cbbShowAs.SelectedIndex == 0)
-                        {
-                            // Auto
-                            if (p.Plugin.ShouldShowAs(data))
-                                pluginItem = p;
-                        }
-                        else
-                        {
-                            // Manual
-                            if (showAsName.Equals(p.Plugin.GetName()))
-                                pluginItem = p;
-                        }
-                    }
-                    if (pluginItem != null)
-                    {
-                        if (pluginItem.Plugin is Control)
-                        {
-                            var newControl = (Control)pluginItem.Plugin;
-                            if (pluginViewBox.Controls.Count > 0)
-                            {
-                                var oldControl = pluginViewBox.Controls[0];
-                                if (!newControl.Equals(oldControl))
-                                {
-                                    pluginViewBox.Controls.Clear();
-                                    pluginViewBox.Controls.Add(newControl);
-                                    var oldPlugin = oldControl as IShowInPlugin;
-                                    if (oldPlugin != null) SafetyCall(oldPlugin.OnBlur);
-                                }
-                            }
-                            else
-                            {
-                                pluginViewBox.Controls.Add(newControl);
-                            }
-                        }
-                        SafetyCall(() => { pluginItem.Plugin.OnShowAs(data); });
-                    }
-                };
-
-                if (InvokeRequired) Invoke(set, showData);
-                else set(showData);
+                if (InvokeRequired) Invoke(new Action<ShowData>(ShowPluginData), showData);
+                else ShowPluginData(showData);
             }
             catch (Exception ex)
             {
@@ -170,7 +128,7 @@ namespace Gnllk.RedisClient
             }
         }
 
-        private static ShowData ToShowData(IKeyItem keyItem)
+        private ShowData ConvertToShowData(IKeyItem keyItem)
         {
             if (keyItem == null) return null;
 
@@ -181,6 +139,60 @@ namespace Gnllk.RedisClient
                 DbName = keyItem.DbName,
                 EndPoint = keyItem.Connection.EndPoint.ToString()
             };
+        }
+
+        private void ShowPluginData(ShowData data)
+        {
+            var showAsName = cbbShowAs.SelectedItem.ToString();
+            var pluginItem = PluginsManager.DefaultPlugin;
+            foreach (var p in PluginsManager.Plugins)
+            {
+                if (cbbShowAs.SelectedIndex == AutoDetected)
+                {
+                    // Auto
+                    if (p.Plugin.ShouldShowAs(data))
+                    {
+                        pluginItem = p;
+                        break;
+                    }
+                }
+                else
+                {
+                    // Manual
+                    if (showAsName.Equals(p.Plugin.GetName()))
+                    {
+                        pluginItem = p;
+                        break;
+                    }
+                }
+            }
+            if (pluginItem != null)
+            {
+                ShowPluginControl(pluginItem);
+                SafetyCall(() => { pluginItem.Plugin.OnShowAs(data); });
+            }
+        }
+
+        private void ShowPluginControl(IPluginItem pluginItem)
+        {
+            if (pluginItem == null) return;
+            if (!(pluginItem.Plugin is Control)) return;
+
+            var newControl = (Control)pluginItem.Plugin;
+            if (pluginViewBox.Controls.Count == 0)
+            {
+                pluginViewBox.Controls.Add(newControl);
+                return;
+            }
+
+            var oldControl = pluginViewBox.Controls[0];
+            if (!newControl.Equals(oldControl))
+            {
+                pluginViewBox.Controls.Clear();
+                pluginViewBox.Controls.Add(newControl);
+                var oldPlugin = oldControl as IShowInPlugin;
+                if (oldPlugin != null) SafetyCall(oldPlugin.OnBlur);
+            }
         }
 
         private void SafetyCall(Action action)
@@ -388,7 +400,7 @@ namespace Gnllk.RedisClient
             SetPrograss(100);
         }
 
-        public ConnectionNode CreateConnectionNode(string connectionName, IRedisConnection redisConnection)
+        private ConnectionNode CreateConnectionNode(string connectionName, IRedisConnection redisConnection)
         {
             var desc = StringHelper.GetString(redisConnection.Description, MAX_STRING_LENGTH, true);
             var text = string.IsNullOrWhiteSpace(desc) ?
@@ -490,6 +502,7 @@ namespace Gnllk.RedisClient
             menu.MenuItems.Add(new MenuItem("Refresh", new EventHandler(OnDbNodeMenuClick), Shortcut.F5) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Search", new EventHandler(OnDbNodeMenuClick), Shortcut.CtrlF) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Sort", new EventHandler(OnDbNodeMenuClick), Shortcut.CtrlS) { Tag = node, ShowShortcut = true });
+            menu.MenuItems.Add(new MenuItem("Paste", new EventHandler(OnDbNodeMenuClick), Shortcut.CtrlV) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Add key value", new EventHandler(OnDbNodeMenuClick), Shortcut.CtrlA) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Delete", new EventHandler(OnDbNodeMenuClick), Shortcut.Del) { Tag = node, ShowShortcut = true });
             return menu;
@@ -509,6 +522,7 @@ namespace Gnllk.RedisClient
         {
             ContextMenu menu = new ContextMenu();
             menu.MenuItems.Add(new MenuItem("Edit", new EventHandler(OnKeyNodeMenuClick), Shortcut.CtrlE) { Tag = node, ShowShortcut = true });
+            menu.MenuItems.Add(new MenuItem("Copy", new EventHandler(OnKeyNodeMenuClick), Shortcut.CtrlC) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Rename", new EventHandler(OnKeyNodeMenuClick), Shortcut.CtrlR) { Tag = node, ShowShortcut = true });
             menu.MenuItems.Add(new MenuItem("Delete", new EventHandler(OnKeyNodeMenuClick), Shortcut.Del) { Tag = node, ShowShortcut = true });
             return menu;
@@ -528,8 +542,8 @@ namespace Gnllk.RedisClient
                         if (item.Connection.Select(form.DbIndex))
                         {
                             var name = form.AddName;
-                            var val = (object)form.ByteData ?? form.AddValue;
-                            if (item.Connection.Execute(new RedisCommand(Command.SET, name, val)).Read<bool>(Readers.IsOK))
+                            var val = form.FileData ?? form.AddValueBytes;
+                            if (item.Connection.Execute(new RedisCommand(Command.SET, name, val)).Read(Readers.IsOK))
                             {
                                 UpdateDbInfo(node);
                                 node.Keys.Add(name);
@@ -543,6 +557,60 @@ namespace Gnllk.RedisClient
                         else
                         {
                             Show("Cannot select db {0} fail", form.DbIndex);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { Show(ex.Message); }
+            finally { item.Loading = false; }
+        }
+
+        private void PasteToDb(DbNode node)
+        {
+            if (!Check(node)) return;
+            var item = node.DatabaseItem;
+            try
+            {
+                item.Loading = true;
+
+                var copyText = Clipboard.GetText();
+                if (string.IsNullOrWhiteSpace(copyText)) return;
+                if (!copyText.StartsWith("{") || !copyText.EndsWith("}")) return;
+
+                var copyData = JsonHelper.FromJson<ClipboardKeyValue>(copyText);
+                if (copyData == null) return;
+
+                using (var form = new OneValueForm())
+                {
+                    form.Value = string.Format("{0}_Copy", copyData.Key);
+                    if (form.ShowDialog(this) == DialogResult.OK)
+                    {
+                        if (item.Connection.Select(item.DbIndex))
+                        {
+                            var name = form.Value;
+                            var val = copyData.Value;
+                            if (item.Connection.Execute(new RedisCommand(Command.EXISTS, name)).Read(Readers.IsTrue))
+                            {
+                                if (MessageBox.Show(string.Format("Exists {0}, do you want to override it?",
+                                    name), "Exists", MessageBoxButtons.YesNo) == DialogResult.No)
+                                {
+                                    return;
+                                }
+                            }
+                            if (item.Connection.Execute(new RedisCommand(Command.SET, name, val)).Read(Readers.IsOK))
+                            {
+                                UpdateDbInfo(node);
+                                node.Keys.Add(name);
+                                AddNode(node, CreateKeyNode(name, item), true);
+                            }
+                            else
+                            {
+                                Show("Set {0} fail", name);
+                            }
+                        }
+                        else
+                        {
+                            Show("Cannot select db {0} fail", item.DbIndex);
                         }
                     }
                 }
@@ -763,6 +831,30 @@ namespace Gnllk.RedisClient
             }, string.Format(DeleteAlertMsgFmt, node.KeyItem.Key));
         }
 
+        private void CopyToClipboard(KeyNode node)
+        {
+            if (!Check(node)) return;
+            var item = node.KeyItem;
+            try
+            {
+                item.Loading = true;
+                var cont = item.Connection;
+                if (cont.Select(item.DbIndex))
+                {
+                    var copyData = new ClipboardKeyValue(item.Key, item.Value);
+                    var copyText = JsonHelper.ToJson(copyData);
+                    Clipboard.SetText(copyText);
+                    ShowStatusInfo("Copied");
+                }
+                else
+                {
+                    Show(string.Format("Cannot select db:{0}", item.DbIndex));
+                }
+            }
+            catch (Exception ex) { ShowStatusInfo(ex.Message); }
+            finally { item.Loading = false; }
+        }
+
         public void RefreshNode(TreeNode node)
         {
             if (node is KeyNode)
@@ -969,13 +1061,17 @@ namespace Gnllk.RedisClient
                         {
                             AddKeyValueToDb(node);
                         }
+                        else if (menu.Shortcut == Shortcut.CtrlF)
+                        {
+                            SearchKeysAsync(node);
+                        }
                         else if (menu.Shortcut == Shortcut.CtrlS)
                         {
                             SortKeysAsync(node);
                         }
-                        else if (menu.Shortcut == Shortcut.CtrlF)
+                        else if (menu.Shortcut == Shortcut.CtrlV)
                         {
-                            SearchKeysAsync(node);
+                            PasteToDb(node);
                         }
                     }
                 }
@@ -1039,6 +1135,10 @@ namespace Gnllk.RedisClient
                         {
                             RemoveKey(node);
                         }
+                        else if (item.Shortcut == Shortcut.CtrlC)
+                        {
+                            CopyToClipboard(node);
+                        }
                         else if (item.Shortcut == Shortcut.CtrlE)
                         {
                             UpdateValue(node);
@@ -1046,6 +1146,10 @@ namespace Gnllk.RedisClient
                         else if (item.Shortcut == Shortcut.CtrlR)
                         {
                             Rename(node);
+                        }
+                        else if (item.Shortcut == Shortcut.CtrlV)
+                        {
+                            PasteToDb(node.Parent as DbNode);
                         }
                     }
                 }
@@ -1073,6 +1177,11 @@ namespace Gnllk.RedisClient
                     if (tvDataTree.SelectedNode is DbNode)
                         AddKeyValueToDb(tvDataTree.SelectedNode as DbNode);
                 }
+                else if (e.Control && e.KeyCode == Keys.C)
+                {
+                    if (tvDataTree.SelectedNode is KeyNode)
+                        CopyToClipboard(tvDataTree.SelectedNode as KeyNode);
+                }
                 else if (e.Control && e.KeyCode == Keys.E)
                 {
                     if (tvDataTree.SelectedNode is KeyNode)
@@ -1092,6 +1201,13 @@ namespace Gnllk.RedisClient
                 {
                     if (tvDataTree.SelectedNode is DbNode)
                         SortKeysAsync(tvDataTree.SelectedNode as DbNode);
+                }
+                else if (e.Control && e.KeyCode == Keys.V)
+                {
+                    if (tvDataTree.SelectedNode is DbNode)
+                        PasteToDb(tvDataTree.SelectedNode as DbNode);
+                    else if (tvDataTree.SelectedNode is KeyNode)
+                        PasteToDb(tvDataTree.SelectedNode.Parent as DbNode);
                 }
                 else if (e.KeyCode == Keys.Delete)
                 {

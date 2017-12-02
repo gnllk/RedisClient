@@ -2,14 +2,21 @@
 using System.Windows.Forms;
 using System.IO;
 using Gnllk.RControl.Properties;
+using System.Text;
 
 namespace Gnllk.RControl
 {
     public partial class AddForm : Form
     {
-        byte[] mByteData = null;
+        public readonly string[] EncodingNames = new string[] { "gb2312", "utf-16", "unicodeFFFE", "Windows-1252", "x-mac-korean", "x-mac-chinesesimp", "utf-32", "utf-32BE", "us-ascii", "x-cp20936", "x-cp20949", "iso-8859-1", "iso-8859-8", "iso-8859-8-i", "iso-2022-jp", "csISO2022JP", "iso-2022-kr", "x-cp50227", "euc-jp", "EUC-CN", "euc-kr", "hz-gb-2312", "GB18030", "x-iscii-de", "x-iscii-be", "x-iscii-ta", "x-iscii-te", "x-iscii-as", "x-iscii-or", "x-iscii-ka", "x-iscii-ma", "x-iscii-gu", "x-iscii-pa", "utf-7", "utf-8" };
 
-        bool mIsValid = true;
+        public const string DefaultEncodingName = "utf-8";
+
+        private bool _isValid = true;
+
+        public Encoding SelectedEncoding { get; protected set; } = Encoding.UTF8;
+
+        public byte[] FileData { get; protected set; }
 
         public string AddName
         {
@@ -23,9 +30,9 @@ namespace Gnllk.RControl
             set { txtValue.Text = value; }
         }
 
-        public byte[] ByteData
+        public byte[] AddValueBytes
         {
-            get { return mByteData; }
+            get { return SelectedEncoding.GetBytes(txtValue.Text); }
         }
 
         public int DbIndex
@@ -45,23 +52,23 @@ namespace Gnllk.RControl
         public AddForm()
         {
             InitializeComponent();
+            cbbEncoding.DataSource = EncodingNames;
+            cbbEncoding.Text = DefaultEncodingName;
+            cbbEncoding.SelectedItem = DefaultEncodingName;
         }
 
-        public AddForm(int dbIndex)
+        public AddForm(int dbIndex) : this()
         {
-            InitializeComponent();
             DbIndex = dbIndex;
         }
 
-        public AddForm(string addName)
+        public AddForm(string addName) : this()
         {
-            InitializeComponent();
             AddName = addName;
         }
 
-        public AddForm(int dbIndex, string addName)
+        public AddForm(int dbIndex, string addName) : this()
         {
-            InitializeComponent();
             DbIndex = dbIndex;
             AddName = addName;
         }
@@ -106,7 +113,6 @@ namespace Gnllk.RControl
         {
             if (string.IsNullOrWhiteSpace(txtValue.Text))
             {
-                mByteData = null;
                 txtValue.Text = Resources.LabValue;
             }
         }
@@ -132,8 +138,10 @@ namespace Gnllk.RControl
                         txtValue.Text = string.Format("The content of file {0}", dialog.FileName);
                         using (BinaryReader reader = new BinaryReader(fs))
                         {
-                            mByteData = reader.ReadBytes((int)fs.Length);
+                            FileData = reader.ReadBytes((int)fs.Length);
                         }
+                        cbbEncoding.Enabled = false;
+                        txtValue.Enabled = false;
                     }
                 }
             }
@@ -155,25 +163,25 @@ namespace Gnllk.RControl
             }
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
-                mIsValid = false;
+                _isValid = false;
                 MessageBox.Show("Name can not be null or empty");
             }
             else
             {
-                mIsValid = true;
+                _isValid = true;
                 DialogResult = DialogResult.OK;
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            mIsValid = true;
+            _isValid = true;
             DialogResult = DialogResult.Cancel;
         }
 
         private void AddForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!mIsValid)
+            if (!_isValid)
             {
                 e.Cancel = true;
             }
@@ -200,6 +208,19 @@ namespace Gnllk.RControl
             if (e.KeyCode == Keys.Escape)
             {
                 btnCancel_Click(sender, new EventArgs());
+            }
+        }
+
+        private void cbbEncoding_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var encodingName = cbbEncoding.SelectedValue.ToString();
+                SelectedEncoding = Encoding.GetEncoding(encodingName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

@@ -170,7 +170,7 @@ namespace RClient
         }
 
         /// <summary>
-        /// read result as integer
+        /// read result as a integer
         /// </summary>
         /// <param name="data">bytes</param>
         /// <returns>integer</returns>
@@ -182,15 +182,25 @@ namespace RClient
         }
 
         /// <summary>
-        /// read something start with + as bool
+        /// return true if the result was a string that start with +OK.
         /// </summary>
         /// <param name="data">bytes</param>
-        /// <returns>ture if ok</returns>
+        /// <returns>true or false</returns>
         public static bool IsOK(byte[] data)
         {
             ThrowExceptionIfError(data);
             string str = ReadAsString(data);
             return RedisUtil.IsOK(str);
+        }
+
+        /// <summary>
+        /// return true if the result was a number which great than zero.
+        /// </summary>
+        /// <param name="data">bytes</param>
+        /// <returns>ture or false</returns>
+        public static bool IsTrue(byte[] data)
+        {
+            return ReadAsInt(data) > 0;
         }
 
         private static void ThrowExceptionIfError(byte[] redisResult)
